@@ -3,6 +3,8 @@ package com.example.grupo_pdm.ui
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.grupo_pdm.R
@@ -20,9 +22,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         val langBtn = findViewById<FloatingActionButton>(R.id.lang_btn)
+
+        val iconRes = if (AppCompatDelegate.getApplicationLocales().toLanguageTags().startsWith("pt")) R.drawable.pt_flag_icon else R.drawable.eng_flag_icon
+        langBtn.setImageResource(iconRes)
+
         langBtn.setOnClickListener {
-            // mudar lingua
-            // mudar icone
+            val currentTags = AppCompatDelegate.getApplicationLocales().toLanguageTags()
+            val isPt = currentTags.startsWith("pt")
+
+
+            val newTags = if (isPt) "en" else "pt-PT"
+            AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(newTags)
+            )
+
         }
+
+
     }
 }

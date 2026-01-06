@@ -1,11 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">grupo_pdm</string>
-    <string name="hello_blank_fragment">ola blank fragment</string>
-
-    <!-- Sign In Screen -->
-    <string name="sign_in_email_hint" translatable="false">Email</string>
     <string name="sign_in_password_hint">Palavra Passe</string>
     <string name="sign_in_button_text">Entrar</string>
     <string name="create_account_button_text">Criar Conta</string>
-
+    <string name="hello_blank_fragment">ola blank fragment</string>
 </resources>
