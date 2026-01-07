@@ -10,4 +10,9 @@
         android:name="com.example.grupo_pdm.ui.user.signInFragment.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" />
+    <fragment
+        android:id="@+id/searchPage"
+        android:name="com.example.grupo_pdm.ui.SearchPage"
+        android:label="SearchPage"
+        tools:layout="@layout/fragment_search_page"/>
 </navigation>
