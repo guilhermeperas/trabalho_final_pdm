@@ -1,4 +1,4 @@
-package com.example.grupo_pdm.ui.user
+package com.example.grupo_pdm.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
