@@ -20,24 +20,5 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val langBtn = findViewById<FloatingActionButton>(R.id.lang_btn)
-
-        val iconRes = if (AppCompatDelegate.getApplicationLocales().toLanguageTags().startsWith("pt")) R.drawable.pt_flag_icon else R.drawable.eng_flag_icon
-        langBtn.setImageResource(iconRes)
-
-        langBtn.setOnClickListener {
-            val currentTags = AppCompatDelegate.getApplicationLocales().toLanguageTags()
-            val isPt = currentTags.startsWith("pt")
-
-
-            val newTags = if (isPt) "en" else "pt-PT"
-            AppCompatDelegate.setApplicationLocales(
-                LocaleListCompat.forLanguageTags(newTags)
-            )
-
-        }
-
-
     }
 }
