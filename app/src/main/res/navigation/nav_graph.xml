@@ -9,10 +9,35 @@
         android:id="@+id/signInFragment"
         android:name="com.example.grupo_pdm.ui.user.signInFragment.SignInFragment"
         android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" />
+        tools:layout="@layout/fragment_sign_in" >
+        <action
+            android:id="@+id/action_signInFragment_to_createAccountFragment"
+            app:destination="@id/createAccountFragment" />
+        <action
+            android:id="@+id/action_signInFragment_to_mainPage"
+            app:destination="@id/mainPage" />
+        <action
+            android:id="@+id/action_signInFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchPage"
         android:name="com.example.grupo_pdm.ui.SearchPage"
         android:label="SearchPage"
         tools:layout="@layout/fragment_search_page"/>
+    <fragment
+        android:id="@+id/createAccountFragment"
+        android:name="com.example.grupo_pdm.ui.user.createAccountFragment.CreateAccountFragment"
+        android:label="fragment_create_account"
+        tools:layout="@layout/fragment_create_account" />
+    <fragment
+        android:id="@+id/mainPage"
+        android:name="com.example.grupo_pdm.MainPage"
+        android:label="fragment_main_page"
+        tools:layout="@layout/fragment_main_page" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.grupo_pdm.ui.user.forgotPasswordFragment.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
 </navigation>
