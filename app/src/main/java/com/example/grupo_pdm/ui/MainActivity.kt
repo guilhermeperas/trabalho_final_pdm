@@ -18,11 +18,5 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        val langBtn = findViewById<FloatingActionButton>(R.id.lang_btn)
-        langBtn.setOnClickListener {
-            // mudar lingua
-            // mudar icone
-        }
     }
 }
