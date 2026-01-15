@@ -66,9 +66,25 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/create_account_button_text"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/forgot_password_text_view"
         app:layout_constraintEnd_toEndOf="@+id/sign_in_button"
         app:layout_constraintStart_toStartOf="@+id/sign_in_button"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_button" />
+
+    <TextView
+        android:id="@+id/forgot_password_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="@string/forgot_password_text"
+        android:textColor="?attr/colorOnSurface"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/create_account_button"
+        app:layout_constraintStart_toStartOf="@+id/create_account_button"
+        app:layout_constraintTop_toBottomOf="@+id/create_account_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

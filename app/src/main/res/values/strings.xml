@@ -1,11 +1,9 @@
 <resources>
-    <string name="app_name">grupo_pdm</string>
-    <string name="hello_blank_fragment">ola blank fragment</string>
-
-    <!-- Sign In Screen -->
-    <string name="sign_in_email_hint" translatable="false">Email</string>
-    <string name="sign_in_password_hint">Palavra Passe</string>
-    <string name="sign_in_button_text">Entrar</string>
-    <string name="create_account_button_text">Criar Conta</string>
-
+    <string name="sign_in_email_hint">Email</string>
+    <string name="sign_in_password_hint">Password</string>
+    <string name="sign_in_button_text">Sign In</string>
+    <string name="create_account_button_text">Create Account</string>
+    <string name="forgot_password_text">Forgot Password?</string>
+    <string name="app_name" translatable="false">MoviePDM</string>
+    <string name="hello_blank_fragment" translatable="false">hello_blank_fragment</string>
 </resources>

@@ -1,0 +1,8 @@
+<resources>
+    <!-- Sign In Screen -->
+    <string name="sign_in_email_hint">Email</string>
+    <string name="sign_in_password_hint">Senha</string>
+    <string name="sign_in_button_text">Entrar</string>
+    <string name="create_account_button_text">Criar Conta</string>
+    <string name="forgot_password_text">Esqueceu a palavra-passe?</string>
+</resources>
