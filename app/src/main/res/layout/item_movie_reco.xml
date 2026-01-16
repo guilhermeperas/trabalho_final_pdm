@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  item_movie_reco.xml
+  Objetivo: “Card” de um filme para listas horizontais (Recomendações / Semelhantes).
+
+  Onde é usado:
+  - RecyclerView horizontal (ex.: rvRecommendations no SearchPage)
+  - Também pode ser usado noutras secções horizontais.
+
+  Estrutura:
+  - Card estreito (largura fixa) para ficar lado a lado.
+  - Poster em cima + título em baixo.
+-->
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="wrap_content"
     android:layout_width="110dp"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="10dp"
     app:cardCornerRadius="12dp"
     app:cardUseCompatPadding="true">
 
+    <!--
+      Conteúdo vertical:
+      - poster
+      - título
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="6dp"
         android:orientation="vertical">
 
+        <!--
+          Poster do filme.
+          - Altura 120dp: mantém a secção compacta.
+          - centerCrop: imagem preenche sem distorcer (corta se necessário).
+          No futuro: imagem real carregada por Glide/Picasso/Coil.
+        -->
         <ImageView
             android:id="@+id/ivPoster"
             android:layout_width="match_parent"
@@ -22,6 +47,11 @@
             android:contentDescription="Poster"
             android:src="@android:drawable/ic_menu_report_image" />
 
+        <!--
+          Título do filme (baixo do poster).
+          - textSize=12sp para caber no card pequeno.
+          - maxLines=1 + ellipsize=end para cortar títulos longos com "...".
+        -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
