@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  item_cast.xml
+  Objetivo: “Card” pequeno para a secção de Elenco (RecyclerView horizontal).
+
+  Estrutura:
+  - Card compacto (90dp de largura) para ficar lado a lado.
+  - Foto do ator/atriz em cima
+  - Nome em baixo (corta com "..." se for grande)
+-->
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="90dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="10dp"
+    app:cardCornerRadius="12dp"
+    app:cardUseCompatPadding="true">
+
+    <!--
+      Layout vertical:
+      - imagem (foto do ator)
+      - texto (nome)
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
+        android:orientation="vertical">
+
+        <!--
+          Foto do ator/atriz.
+          - Altura 60dp: fica pequeno para caber numa lista horizontal.
+          - centerCrop: preenche sem distorcer (corta se necessário).
+          No futuro: aqui entra a foto real do ator via Glide/Picasso/Coil.
+        -->
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Actor"
+            android:src="@android:drawable/ic_menu_camera"/>
+
+        <!--
+          Nome do ator/atriz.
+          - bold + 12sp para ser legível no card pequeno.
+          - maxLines=1 + ellipsize=end: títulos/nomes grandes ficam com "...".
+        -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="Leonardo"/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -5,4 +5,24 @@
     <string name="sign_in_button_text">Entrar</string>
     <string name="create_account_button_text">Criar Conta</string>
     <string name="forgot_password_text">Esqueceu a palavra-passe?</string>
+
+    <!-- Common / Top bar -->
+    <string name="hint_search">Pesquisar</string>
+    <string name="cd_home">Início</string>
+    <string name="cd_user">Utilizador</string>
+
+    <!-- Search results screen -->
+    <string name="title_recommendations">Recomendações</string>
+    <string name="msg_default">Mensagem</string>
+
+    <!-- Movie detail screen -->
+    <string name="title_synopsis">Sinopse</string>
+    <string name="title_cast">Elenco</string>
+    <string name="title_comments">Comentários</string>
+    <string name="hint_new_comment">Escreva um comentário</string>
+    <string name="cd_send_comment">Enviar comentário</string>
+
+    <!-- Accessibility / misc -->
+    <string name="cd_poster">Poster</string>
+    <string name="cd_actor">Ator</string>
 </resources>

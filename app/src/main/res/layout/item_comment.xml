@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  item_comment.xml
+  Objetivo: Card de um comentário para a lista de comentários (RecyclerView vertical)
+  no ecrã de detalhe do filme.
+
+  Estrutura:
+  - MaterialCardView: cartão com cantos arredondados e padding/sombra.
+  - Dentro: layout vertical com:
+      1) nome do utilizador
+      2) data do comentário
+      3) texto do comentário
+-->
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardUseCompatPadding="true">
+
+    <!--
+      LinearLayout vertical para empilhar os textos (User -> Date -> Comment).
+      padding="10dp" dá espaço interno para ficar mais legível.
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <!--
+          Nome do utilizador que escreveu o comentário.
+          bold para destacar quem escreveu.
+          No futuro: este texto vem de dados reais (ex.: username).
+        -->
+        <TextView
+            android:id="@+id/tvUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="User 1"/>
+
+        <!--
+          Data (ou hora) do comentário.
+          alpha + textSize menor => fica como informação secundária.
+          No futuro: vem do backend/BD (ex.: "há 2 dias" ou "2026-01-16").
+        -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.65"
+            android:textSize="12sp"
+            android:text="2026-01-16"/>
+
+        <!--
+          Texto do comentário.
+          Sem maxLines => pode crescer para várias linhas (quebra linha automaticamente).
+          marginTop para separar da data.
+        -->
+        <TextView
+            android:id="@+id/tvComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="Comentário aqui... pode ser maior e quebrar linha."/>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

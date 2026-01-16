@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  item_movie_result.xml
+  Objetivo: “Card” de um filme para a lista vertical de RESULTADOS (SearchPage).
+
+  Estrutura:
+  - MaterialCardView: dá o aspeto de cartão (cantos arredondados, sombra/padding).
+  - Dentro: layout horizontal com poster à esquerda + textos à direita.
+-->
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,12 +18,23 @@
     app:cardCornerRadius="12dp"
     app:cardUseCompatPadding="true">
 
+    <!--
+      LinearLayout horizontal:
+      - Esquerda: poster do filme
+      - Direita: bloco vertical com título e meta-info
+    -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="horizontal">
 
+        <!--
+          Poster do filme.
+          - 60x90dp: proporção tipo poster.
+          - centerCrop: preenche sem distorcer (corta se necessário).
+          No futuro: aqui entra a imagem real via Glide/Picasso/Coil.
+        -->
         <ImageView
             android:id="@+id/ivPoster"
             android:layout_width="60dp"
@@ -22,6 +43,11 @@
             android:contentDescription="Poster"
             android:src="@android:drawable/ic_menu_report_image" />
 
+        <!--
+          Bloco de texto (à direita).
+          layout_width="0dp" + layout_weight="1":
+          - Faz este bloco ocupar todo o espaço restante ao lado do poster.
+        -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -29,6 +55,12 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!--
+              Título do filme.
+              - bold + 16sp para destaque.
+              - maxLines=2 + ellipsize=end para não “rebentar” o layout
+                (se for um título grande, corta com "...").
+            -->
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
@@ -39,6 +71,10 @@
                 android:maxLines="2"
                 android:ellipsize="end"/>
 
+            <!--
+              Meta informação (ex.: ano + género).
+              alpha=0.75 deixa mais “leve” (texto secundário).
+            -->
             <TextView
                 android:id="@+id/tvMeta"
                 android:layout_width="match_parent"

@@ -1,48 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<!--
+  fragment_search_page.xml
+  Objetivo: Ecrã de resultados de pesquisa.
+  Estrutura:
+  - Topo: botão Home + barra de pesquisa + botão User
+  - Corpo: lista vertical de resultados
+  - Secção inferior: recomendações em lista horizontal
+  - Estados: loading e mensagem (vazio/erro)
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:padding="12dp"
     tools:layout="@layout/fragment_search_page">
 
-    <!-- Casa -->
+    <!--
+      Botão Home (ícone de casa).
+      No futuro: onClick pode navegar para o ecrã inicial/home do app.
+    -->
     <ImageButton
         android:id="@+id/btnHome"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Início"
+        android:contentDescription="@string/cd_home"
         android:src="@drawable/ic_home_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- User -->
+    <!--
+      Botão User (perfil).
+      No futuro: onClick pode abrir login/perfil/configurações.
+    -->
     <ImageButton
         android:id="@+id/btnUser"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Utilizador"
+        android:contentDescription="@string/cd_user"
         android:src="@drawable/ic_user_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Pesquisa -->
+    <!--
+      Barra de pesquisa (Material TextInputLayout + EditText).
+      - Fica entre os botões Home e User.
+      - Tem ícone de pesquisa do lado direito (endIcon).
+      No futuro: ao clicar no ícone ou no "Search" do teclado, faz nova pesquisa.
+    -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Pesquisar"
+        android:hint="@string/hint_search"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         app:endIconMode="custom"
         app:endIconDrawable="@android:drawable/ic_menu_search"
         app:layout_constraintStart_toEndOf="@id/btnHome"
         app:layout_constraintEnd_toStartOf="@id/btnUser"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp">
+        app:layout_constraintTop_toTopOf="parent">
 
+        <!--
+          Campo onde o utilizador escreve o texto da pesquisa.
+          imeOptions="actionSearch" faz o teclado mostrar ação "Search".
+          maxLines=1 para manter o campo numa linha.
+        -->
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
@@ -52,32 +80,44 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <!-- Loading -->
+    <!--
+      Loading (ProgressBar).
+      - Começa oculto (gone).
+      No futuro: fica visível enquanto a app está a chamar a API/BD.
+    -->
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/tilSearch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Mensagem (vazio/erro) -->
+    <!--
+      Mensagem para estados "vazio" ou "erro".
+      - Começa oculta (gone).
+      No futuro: pode mostrar "Sem resultados..." ou "Erro de rede...".
+    -->
     <TextView
         android:id="@+id/tvMessage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:gravity="center"
-        android:text="Mensagem"
+        android:text="@string/msg_default"
+        android:layout_marginTop="12dp"
         app:layout_constraintTop_toBottomOf="@id/tilSearch"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Resultados -->
+    <!--
+      RecyclerView de RESULTADOS (vertical).
+      - layout_height="0dp" + constraints => ocupa o espaço disponível até ao título "Recomendações".
+      - paddingBottom + clipToPadding=false => evita que o último item fique colado/“cortado”.
+      - tools:listitem / tools:itemCount => só para Preview (não afeta runtime).
+    -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="0dp"
@@ -85,26 +125,37 @@
         android:layout_marginTop="12dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/tvRecommendations"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        app:layout_constraintBottom_toTopOf="@id/tvRecommendations"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:itemCount="8"
         tools:listitem="@layout/item_movie_result" />
 
+    <!--
+      Título da secção de Recomendações.
+      - Fica imediatamente acima do RecyclerView horizontal.
+      - Margens para dar "respiro" visual.
+    -->
     <TextView
         android:id="@+id/tvRecommendations"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Recomendações"
+        android:text="@string/title_recommendations"
         android:textStyle="bold"
         android:layout_marginTop="14dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/rvRecommendations"/>
+        app:layout_constraintBottom_toTopOf="@id/rvRecommendations" />
 
-
+    <!--
+      RecyclerView de RECOMENDAÇÕES (horizontal).
+      - android:orientation="horizontal" + LinearLayoutManager => itens lado a lado.
+      - Altura fixa (150dp) para controlar o tamanho da secção.
+      - tools:* => apenas para Preview.
+      No futuro: recebe lista de filmes recomendados (tema/género, etc).
+    -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRecommendations"
         android:layout_width="0dp"
@@ -120,9 +171,5 @@
         tools:listitem="@layout/item_movie_reco"
         tools:itemCount="6"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

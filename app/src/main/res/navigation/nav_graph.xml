@@ -40,4 +40,9 @@
         android:name="com.example.grupo_pdm.ui.user.forgotPasswordFragment.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/moviePage"
+        android:name="com.example.grupo_pdm.ui.MovieDetailFragment"
+        android:label="MovieDetail"
+        tools:layout="@layout/fragment_movie_detail"/>
 </navigation>

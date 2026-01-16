@@ -6,4 +6,24 @@
     <string name="forgot_password_text">Forgot Password?</string>
     <string name="app_name" translatable="false">MoviePDM</string>
     <string name="hello_blank_fragment" translatable="false">hello_blank_fragment</string>
+    <!-- Common / Top bar -->
+    <string name="hint_search">Search</string>
+    <string name="cd_home">Home</string>
+    <string name="cd_user">User</string>
+
+    <!-- Search results screen -->
+    <string name="title_recommendations">Recommendations</string>
+    <string name="msg_default">Message</string>
+
+    <!-- Movie detail screen -->
+    <string name="title_synopsis">Synopsis</string>
+    <string name="title_cast">Cast</string>
+    <string name="title_comments">Comments</string>
+    <string name="hint_new_comment">Write a comment</string>
+    <string name="cd_send_comment">Send comment</string>
+
+    <!-- Accessibility / misc -->
+    <string name="cd_poster">Poster</string>
+    <string name="cd_actor">Actor</string>
+
 </resources>
