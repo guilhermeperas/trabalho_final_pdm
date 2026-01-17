@@ -1,4 +1,4 @@
-package com.example.grupo_pdm.ui
+package com.example.grupo_pdm.ui.movie
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

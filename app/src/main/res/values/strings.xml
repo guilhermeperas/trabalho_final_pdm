@@ -26,4 +26,11 @@
     <string name="cd_poster">Poster</string>
     <string name="cd_actor">Actor</string>
 
+    <!-- Main page -->
+    <string name="title_random_movie">Random Movie</string>
+    <string name="title_categories">Categories</string>
+    <string name="title_new">New</string>
+    <string name="title_trending">Trending</string>
+    <string name="title_actors">Actors</string>
+
 </resources>
