@@ -1,4 +1,4 @@
-package com.example.grupo_pdm.ui.movie
+package com.example.grupo_pdm.ui.movie.searchPageScreen
 
 import android.os.Bundle
 import android.view.LayoutInflater

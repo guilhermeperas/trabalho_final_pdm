@@ -1,4 +1,4 @@
-package com.example.grupo_pdm.ui.movie
+package com.example.grupo_pdm.ui.movie.mainPageScreen
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
