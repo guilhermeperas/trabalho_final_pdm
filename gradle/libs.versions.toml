@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0" # alterar a versão para a indicada se der um erro relacionado
+agp = "8.13.2" # alterar a versão para a indicada se der um erro relacionado
 fragmentKtx = "1.8.9"
 kotlin = "2.2.20"
 cameraview="2.7.2"
