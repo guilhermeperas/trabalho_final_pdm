@@ -16,15 +16,7 @@
         <action
             android:id="@+id/action_signInFragment_to_mainPage"
             app:destination="@id/mainPage" />
-        <action
-            android:id="@+id/action_signInFragment_to_forgotPasswordFragment"
-            app:destination="@id/forgotPasswordFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/searchPage"
-        android:name="com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage"
-        android:label="SearchPage"
-        tools:layout="@layout/fragment_search_page"/>
     <fragment
         android:id="@+id/createAccountFragment"
         android:name="com.example.grupo_pdm.ui.user.createAccountFragment.CreateAccountFragment"
@@ -36,20 +28,16 @@
         android:label="fragment_main_page"
         tools:layout="@layout/fragment_main_page" >
         <action
-            android:id="@+id/action_mainPage_to_searchPage"
-            app:destination="@id/searchPage" />
-        <action
-            android:id="@+id/action_mainPage_to_moviePage"
-            app:destination="@id/moviePage" />
+            android:id="@+id/action_mainPage_to_peopleDetailFragment"
+            app:destination="@id/peopleDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.grupo_pdm.ui.user.forgotPasswordFragment.ForgotPasswordFragment"
-        android:label="fragment_forgot_password"
-        tools:layout="@layout/fragment_forgot_password" />
-    <fragment
-        android:id="@+id/moviePage"
-        android:name="com.example.grupo_pdm.ui.movie.movieDetailScreen.MovieDetailFragment"
-        android:label="MovieDetail"
-        tools:layout="@layout/fragment_movie_detail"/>
+        android:id="@+id/peopleDetailFragment"
+        android:name="com.example.grupo_pdm.ui.people.details.PeopleDetailFragment"
+        android:label="fragment_people_detail"
+        tools:layout="@layout/fragment_people_detail">
+        <argument
+            android:name="personId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

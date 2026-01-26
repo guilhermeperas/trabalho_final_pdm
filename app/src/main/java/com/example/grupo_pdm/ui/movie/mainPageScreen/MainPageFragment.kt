@@ -1,60 +1,70 @@
 package com.example.grupo_pdm.ui.movie.mainPageScreen
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.databinding.FragmentMainPageBinding
+import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
+import com.example.grupo_pdm.ui.adapters.CategoryAdapter
+import com.example.grupo_pdm.ui.adapters.MovieAdapter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MainPage : Fragment(R.layout.fragment_main_page) {
+    private var _binding: FragmentMainPageBinding? = null
+    private val binding get() = _binding!!
+    
+    private val viewModel: MainPageViewModel by viewModels()
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MainPage.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MainPage : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val categoryAdapter = CategoryAdapter { category ->
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    }
+    private val newMovieAdapter = MovieAdapter { movie ->
+
+    }
+    private val trendingMovieAdapter = MovieAdapter { movie ->
+    }
+    private val actorAdapter = ActorHomeAdapter { person ->
+        findNavController().navigate(
+            MainPageDirections.actionMainPageToPeopleDetailFragment(person.id)
+        )
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentMainPageBinding.bind(view)
+
+        setupRecyclerViews()
+        observeData()
+    }
+    
+    private fun setupRecyclerViews() {
+        binding.rvCategories.adapter = categoryAdapter
+        binding.rvNewMovies.adapter = newMovieAdapter
+        binding.rvTrendingMovies.adapter = trendingMovieAdapter
+        binding.rvActors.adapter = actorAdapter
+    }
+    
+    private fun observeData() {
+        viewLifecycleOwner.lifecycleScope.launch {
+             viewModel.actors.collect { result ->
+                 when (result) {
+                    is ApiResult.Success -> actorAdapter.submitList(result.data)
+                    is ApiResult.Failure -> Toast.makeText(requireContext(), "Failed to load actors: ${result.error.detail}", Toast.LENGTH_SHORT).show()
+                    else -> {}
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_page, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MainPage.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainPage().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

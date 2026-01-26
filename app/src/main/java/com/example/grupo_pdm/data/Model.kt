@@ -100,8 +100,8 @@ data class CreatePersonRequest(
 @Serializable
 data class PictureResponse(
     val id: Int,
-    val filename: String,
-    val data: String,
+    val filename: String? = null,
+    val data: String? = null,
 )
 
 @Serializable
@@ -110,6 +110,32 @@ data class CreatePictureRequest(
     val data: String
 )
 
+
+
+@Serializable
+data class RegisterUserRequest(
+    val username: String,
+    val password: String,
+    val dateOfBirth: String? = null,
+    val picture: CreatePictureRequest? = null
+)
+
+@Serializable
+data class LoginResponse(
+
+    val id: Int,
+    val username: String,
+    val role: String,
+    val description: String? = null
+)
+@Serializable
+data class ProblemDetails(
+    val type: String,
+    val title: String,
+    val status: Int,
+    val detail: String,
+    val instance: String? = null
+)
 class InstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
