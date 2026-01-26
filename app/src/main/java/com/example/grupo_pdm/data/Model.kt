@@ -100,8 +100,8 @@ data class CreatePersonRequest(
 @Serializable
 data class PictureResponse(
     val id: Int,
-    val filename: String,
-    val data: String,
+    val filename: String? = null,
+    val data: String? = null,
 )
 
 @Serializable
