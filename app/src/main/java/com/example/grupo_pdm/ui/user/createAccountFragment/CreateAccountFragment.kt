@@ -1,60 +1,147 @@
 package com.example.grupo_pdm.ui.user.createAccountFragment
 
+import android.Manifest
+import android.app.DatePickerDialog
+import android.graphics.Bitmap
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.data.CreatePictureRequest
+import com.example.grupo_pdm.data.MovieServiceClient
+import com.example.grupo_pdm.data.RegisterUserRequest
+import com.example.grupo_pdm.databinding.FragmentCreateAccountBinding
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.util.Base64
+import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class CreateAccountFragment : Fragment(R.layout.fragment_create_account) {
+    
+    private var _binding: FragmentCreateAccountBinding? = null
+    private val binding get() = _binding!!
 
-/**
- * A simple [Fragment] subclass.
- * Use the [CreateAccountFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class CreateAccountFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var selectedDateOfBirth: String? = null
+    private var selectedImageBase64: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
+        if (bitmap != null) {
+            binding.profileImageView.setImageBitmap(bitmap)
+            selectedImageBase64 = encodeImageToBase64(bitmap)
+            binding.selectImageText.visibility = View.GONE
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_account, container, false)
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            takePictureLauncher.launch(null)
+        } else {
+            Toast.makeText(requireContext(), "Camera permission required to take photo", Toast.LENGTH_SHORT).show()
+        }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CreateAccountFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CreateAccountFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentCreateAccountBinding.bind(view)
+
+        binding.dobEditText.setOnClickListener {
+            showDatePicker()
+        }
+
+        binding.profileImageView.setOnClickListener {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+
+        binding.createAccountButton.setOnClickListener {
+            handleRegister()
+        }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun showDatePicker() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
+            // Format: YYYY-MM-DD
+            val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+            selectedDateOfBirth = formattedDate
+            binding.dobEditText.setText(formattedDate)
+        }, year, month, day).show()
+    }
+
+    private fun encodeImageToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
+        val bytes = outputStream.toByteArray()
+        return Base64.getEncoder().encodeToString(bytes)
+    }
+
+    private fun handleRegister() {
+        val username = binding.usernameEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
+
+        if (username.isBlank() || password.isBlank()) {
+            Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val pictureRequest = if (selectedImageBase64 != null) {
+            CreatePictureRequest(
+                filename = "profile_${System.currentTimeMillis()}.jpg",
+                data = selectedImageBase64!!
+            )
+        } else {
+            null
+        }
+
+        val request = RegisterUserRequest(
+            username = username,
+            password = password,
+            dateOfBirth = selectedDateOfBirth,
+            picture = pictureRequest
+        )
+
+        binding.loadingLayout.visibility = View.VISIBLE
+        setLoading(true)
+
+        lifecycleScope.launch {
+            val result = MovieServiceClient.register(request)
+            // Check binding safely inside coroutine
+            if (_binding != null) {
+                setLoading(false)
+                
+                when (result) {
+                    is ApiResult.Success -> {
+                        Toast.makeText(requireContext(), "Account created!", Toast.LENGTH_SHORT).show()
+                        findNavController().popBackStack()
+                    }
+                    is ApiResult.Failure -> {
+                        Toast.makeText(requireContext(), "Registration failed Unknown error", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {}
                 }
             }
+        }
+    }
+
+    private fun setLoading(isLoading: Boolean) {
+        binding.loadingLayout.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.createAccountButton.isEnabled = !isLoading
+        binding.usernameEditText.isEnabled = !isLoading
+        binding.passwordEditText.isEnabled = !isLoading
+        binding.dobEditText.isEnabled = !isLoading
+        binding.profileImageView.isEnabled = !isLoading
     }
 }

@@ -1,11 +1,7 @@
 package com.example.grupo_pdm.ui.user.signInFragment
 
-import android.graphics.Paint
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.view.isVisible
@@ -14,13 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.MovieServiceClient
-import com.example.grupo_pdm.data.httpClient
 import com.example.grupo_pdm.databinding.FragmentSignInBinding
-import io.ktor.client.request.basicAuth
-import io.ktor.client.request.get
-import io.ktor.client.request.head
-import io.ktor.http.isSuccess
 import kotlinx.coroutines.launch
 
 class SignInFragment : Fragment(R.layout.fragment_sign_in) {
@@ -29,38 +21,54 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
     private val binding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSignInBinding.bind(view)
 
-        binding.loginBtn.setOnClickListener {
-            setLoading(true)
+        binding.createBtn.setOnClickListener {
+            findNavController().navigate(
+                SignInFragmentDirections.actionSignInFragmentToCreateAccountFragment()
+            )
+        }
 
+        binding.loginBtn.setOnClickListener {
             val username = binding.username.text.toString()
             val password = binding.password.text.toString()
 
+            if (username.isBlank() || password.isBlank()) {
+                Toast.makeText(requireContext(), "Please enter username and password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            setLoading(true)
+
             lifecycleScope.launch {
-
-                val authResponse = httpClient.get("/users/login") {
-                    basicAuth(username, password)
-                }
-
-                if (authResponse.status.isSuccess()) {
-
-                    MovieServiceClient.setCredentials(username, password)
-
-                    requireActivity()
-                        .getSharedPreferences("prefs", 0)
-                        .edit {
-                            putString("username", username)
-                            putString("password", password)
-                        }
-                    goToMain()
-                } else {
-                    // error
+                val result = MovieServiceClient.login(username, password)
+                // Check binding safely inside coroutine as view might be destroyed
+                if (_binding != null) {
                     setLoading(false)
+
+                    when (result) {
+                        is ApiResult.Success -> {
+                            requireActivity().getSharedPreferences("prefs", 0).edit {
+                                putString("username", username)
+                                putString("password", password)
+                            }
+                            goToMain()
+                        }
+                        is ApiResult.Failure -> {
+                            Toast.makeText(requireContext(), "Login failed: ${result.error.detail}", Toast.LENGTH_LONG).show()
+                        }
+
+                        is ApiResult.Loading -> setLoading(true)
+                    }
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun setLoading(loading: Boolean) {
@@ -68,16 +76,14 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         binding.loginBtn.isEnabled = !loading
         binding.usernameLayout.isEnabled = !loading
         binding.passwordLayout.isEnabled = !loading
-
     }
 
     private fun goToMain() {
-        findNavController()
-            .navigate(
-                SignInFragmentDirections.actionSignInFragmentToMainPage(),
-                NavOptions.Builder().apply {
-                    this.setPopUpTo(R.id.signInFragment, true)
-                }.build()
-            )
+        findNavController().navigate(
+            SignInFragmentDirections.actionSignInFragmentToMainPage(),
+            NavOptions.Builder().apply {
+                this.setPopUpTo(R.id.signInFragment, true)
+            }.build()
+        )
     }
 }

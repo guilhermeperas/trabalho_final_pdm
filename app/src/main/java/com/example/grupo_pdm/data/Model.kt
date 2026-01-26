@@ -111,8 +111,18 @@ data class CreatePictureRequest(
 )
 
 
+
+@Serializable
+data class RegisterUserRequest(
+    val username: String,
+    val password: String,
+    val dateOfBirth: String? = null,
+    val picture: CreatePictureRequest? = null
+)
+
 @Serializable
 data class LoginResponse(
+
     val id: Int,
     val username: String,
     val role: String,
