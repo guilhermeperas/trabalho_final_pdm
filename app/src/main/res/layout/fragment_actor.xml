@@ -2,52 +2,49 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Picture -->
+        <!-- Foto do ator -->
         <ImageView
             android:id="@+id/imgActor"
-            android:layout_width="120dp"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
             android:src="@drawable/ic_actor_placeholder"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Name  -->
+        <!-- Nome do ator -->
         <TextView
             android:id="@+id/txtActorName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Nome do Ator"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textAlignment="center"
-            android:layout_marginTop="12dp"
-            app:layout_constraintTop_toBottomOf="@id/imgActor"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp"
+            app:layout_constraintTop_toTopOf="@id/imgActor"
+            app:layout_constraintStart_toEndOf="@id/imgActor"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Infos -->
+        <!-- Informações -->
         <TextView
             android:id="@+id/txtActorInfo"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Nascimento: 01/01/1980 • Nacionalidade: EUA"
+            android:text="Nascimento: 01/01/1980\nNacionalidade: EUA"
             android:textSize="14sp"
-            android:textAlignment="center"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
             app:layout_constraintTop_toBottomOf="@id/txtActorName"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imgActor"
             app:layout_constraintEnd_toEndOf="parent" />
-        <!-- Bio title-->
+
+        <!-- Biografia título -->
         <TextView
             android:id="@+id/txtBioTitle"
             android:layout_width="wrap_content"
@@ -56,22 +53,22 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="24dp"
-            app:layout_constraintTop_toBottomOf="@id/txtActorInfo"
+            app:layout_constraintTop_toBottomOf="@id/imgActor"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Bio -->
+        <!-- Biografia texto -->
         <TextView
             android:id="@+id/txtActorBio"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Aqui vai a biografia do ator. Texto longo apenas para exemplo de layout."
+            android:text="Aqui vai a biografia do ator."
             android:textSize="14sp"
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@id/txtBioTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Movies title -->
+        <!-- Filmes título -->
         <TextView
             android:id="@+id/txtMoviesTitle"
             android:layout_width="wrap_content"
@@ -83,7 +80,7 @@
             app:layout_constraintTop_toBottomOf="@id/txtActorBio"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Movies list -->
+        <!-- Lista de filmes -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvActorMovies"
             android:layout_width="0dp"
@@ -93,7 +90,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Series title -->
+        <!-- Séries título -->
         <TextView
             android:id="@+id/txtSeriesTitle"
             android:layout_width="wrap_content"
@@ -105,7 +102,7 @@
             app:layout_constraintTop_toBottomOf="@id/rvActorMovies"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Series list -->
+        <!-- Lista de séries -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvActorSeries"
             android:layout_width="0dp"
@@ -114,5 +111,6 @@
             app:layout_constraintTop_toBottomOf="@id/txtSeriesTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
