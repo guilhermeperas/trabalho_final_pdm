@@ -41,17 +41,14 @@ android {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
         }
+        sourceSets.all {
+            languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
+            languageSettings.optIn("kotlin.io.path.ExperimentalPathApi")
+            languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
+            languageSettings.optIn("kotlin.time.ExperimentalTime")
+        }
     }
 }
-kotlin {
-    sourceSets.all {
-        languageSettings.optIn("kotlinx.serialization.ExperimentalSerializationApi")
-        languageSettings.optIn("kotlin.io.path.ExperimentalPathApi")
-        languageSettings.optIn("kotlin.uuid.ExperimentalUuidApi")
-        languageSettings.optIn("kotlin.time.ExperimentalTime")
-    }
-}
-
 dependencies {
 
     // fragment & navigation
@@ -67,13 +64,13 @@ dependencies {
     // others (nice-to-have)
     implementation(libs.circleimageview) // documentação em https://github.com/hdodenhof/CircleImageView
 
-    implementation("io.ktor:ktor-client-core:3.3.2")
+    implementation("io.ktor:ktor-client-core:3.4.0")
     implementation("io.ktor:ktor-client-android:3.3.2")
     implementation("io.ktor:ktor-client-content-negotiation:3.3.2")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
     implementation("io.coil-kt.coil3:coil:3.3.0")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 

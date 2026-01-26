@@ -3,20 +3,20 @@ package com.example.grupo_pdm.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.grupo_pdm.data.Person
+import com.example.grupo_pdm.data.PersonResponse
 import com.example.grupo_pdm.databinding.ItemActorHomeBinding
 
 /**
  * Adapter for displaying actors in a horizontal RecyclerView on the home page.
  */
 class ActorHomeAdapter(
-    onActorClick: (Person) -> Unit = {}
-) : BaseAdapter<Person, ActorHomeAdapter.ActorViewHolder>(onItemClick = onActorClick) {
+    onActorClick: (PersonResponse) -> Unit = {}
+) : BaseAdapter<PersonResponse, ActorHomeAdapter.ActorViewHolder>(onItemClick = onActorClick) {
 
     inner class ActorViewHolder(private val binding: ItemActorHomeBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(actor: Person) {
+        fun bind(actor: PersonResponse) {
             binding.tvActorName.text = actor.name
 
             binding.root.setOnClickListener {

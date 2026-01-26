@@ -3,7 +3,7 @@ package com.example.grupo_pdm.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.grupo_pdm.data.Movie
+import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
 
 /**
@@ -11,13 +11,13 @@ import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
  * Used for both "New" and "Trending" sections on the main page.
  */
 class MovieAdapter(
-    onMovieClick: (Movie) -> Unit = {}
-) : BaseAdapter<Movie, MovieAdapter.MovieViewHolder>(onItemClick = onMovieClick) {
+    onMovieClick: (MovieResponse) -> Unit = {}
+) : BaseAdapter<MovieResponse, MovieAdapter.MovieViewHolder>(onItemClick = onMovieClick) {
 
     inner class MovieViewHolder(private val binding: ItemMovieRecoBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(movie: Movie) {
+        fun bind(movie: MovieResponse) {
             binding.tvTitle.text = movie.title
             // TODO: Load poster image with Glide/Coil
             // Glide.with(binding.root).load(movie.posterUrl).into(binding.ivPoster)
