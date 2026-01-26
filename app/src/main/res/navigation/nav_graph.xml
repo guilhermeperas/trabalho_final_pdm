@@ -16,9 +16,6 @@
         <action
             android:id="@+id/action_signInFragment_to_mainPage"
             app:destination="@id/mainPage" />
-        <action
-            android:id="@+id/action_signInFragment_to_forgotPasswordFragment"
-            app:destination="@id/forgotPasswordFragment" />
     </fragment>
     <fragment
         android:id="@+id/searchPage"
@@ -42,11 +39,6 @@
             android:id="@+id/action_mainPage_to_moviePage"
             app:destination="@id/moviePage" />
     </fragment>
-    <fragment
-        android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.grupo_pdm.ui.user.forgotPasswordFragment.ForgotPasswordFragment"
-        android:label="fragment_forgot_password"
-        tools:layout="@layout/fragment_forgot_password" />
     <fragment
         android:id="@+id/moviePage"
         android:name="com.example.grupo_pdm.ui.movie.movieDetailScreen.MovieDetailFragment"

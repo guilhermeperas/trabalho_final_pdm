@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.devtools.ksp")
+    kotlin("plugin.serialization") version "2.0.21"
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -64,15 +66,13 @@ dependencies {
     // others (nice-to-have)
     implementation(libs.circleimageview) // documentação em https://github.com/hdodenhof/CircleImageView
 
-    implementation("io.ktor:ktor-client-core:3.4.0")
-    implementation("io.ktor:ktor-client-android:3.3.2")
-    implementation("io.ktor:ktor-client-content-negotiation:3.3.2")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:3.3.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
-    implementation("io.coil-kt.coil3:coil:3.3.0")
-    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
+    implementation("io.ktor:ktor-client-core:3.0.3")
+    implementation("io.ktor:ktor-client-android:3.0.3")
+    implementation("io.ktor:ktor-client-content-negotiation:3.0.3")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.0.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation("io.coil-kt.coil3:coil:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
