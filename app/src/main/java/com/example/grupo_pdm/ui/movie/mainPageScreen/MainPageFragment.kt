@@ -13,6 +13,7 @@ import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
+import com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage
 import kotlinx.coroutines.launch
 
 class MainPage : Fragment(R.layout.fragment_main_page) {
@@ -31,6 +32,7 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     }
     private val actorAdapter = ActorHomeAdapter { person ->
         findNavController().navigate(
+
             MainPageDirections.actionMainPageToPeopleDetailFragment(person.id)
         )
 
@@ -42,6 +44,8 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
 
         setupRecyclerViews()
         observeData()
+
+
     }
     
     private fun setupRecyclerViews() {

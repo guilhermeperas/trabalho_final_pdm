@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_mainPage_to_peopleDetailFragment"
             app:destination="@id/peopleDetailFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_searchPage"
+            app:destination="@id/searchPage" />
     </fragment>
     <fragment
         android:id="@+id/peopleDetailFragment"
@@ -40,4 +43,8 @@
             android:name="personId"
             app:argType="integer" />
     </fragment>
+    <fragment
+        android:id="@+id/searchPage"
+        android:name="com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage"
+        android:label="SearchPage" />
 </navigation>

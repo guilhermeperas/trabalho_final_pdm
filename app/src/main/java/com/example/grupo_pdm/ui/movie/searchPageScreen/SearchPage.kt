@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.grupo_pdm.R
 
-class SearchPage : Fragment() {
+class SearchPage : Fragment(R.layout.fragment_search_page) {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
