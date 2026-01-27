@@ -19,7 +19,7 @@ class RatingAdapter : ListAdapter<RatingResponse, RatingAdapter.RatingViewHolder
         fun bind(rating: RatingResponse) {
             binding.tvUser.text = "User #${rating.author}"
             binding.tvComment.text = rating.comment?.takeIf { it.isNotBlank() } ?: "No comment"
-            binding.tvDate.text = "" // No date in API response
+            binding.tvDate.text = ""
             binding.tvRating.text = "${rating.score}"
         }
     }

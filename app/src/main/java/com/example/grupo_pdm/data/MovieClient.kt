@@ -1,6 +1,5 @@
     package com.example.grupo_pdm.data
 
-import android.graphics.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -19,7 +18,6 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
@@ -158,26 +156,7 @@ object MovieServiceClient {
 
         }
     }
-    
-    /**
-     * Fetches raw image bytes from /pictures/{id} endpoint.
-     * The API returns binary data directly, not JSON.
-     */
-    fun getPictureBytes(pictureId: Int): Flow<ApiResult<ByteArray>> = flow {
-        try {
-            val response = client.get("/pictures/$pictureId")
-            if (response.status.isSuccess()) {
-                val bytes = response.body<ByteArray>()
-                emit(ApiResult.Success(bytes))
-            } else {
-                emit(ApiResult.Failure(ProblemDetails("error", "Failed to fetch image", response.status.value, "Image fetch failed")))
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("MovieClient", "Exception fetching picture bytes $pictureId", e)
-            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
-        }
-    }
-    
+
     fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
         try {
             val response = client.get("/people/$id")
