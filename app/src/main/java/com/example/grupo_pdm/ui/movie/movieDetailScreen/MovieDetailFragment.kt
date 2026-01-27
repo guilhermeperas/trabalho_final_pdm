@@ -5,56 +5,59 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.databinding.FragmentCategoryMovieScreenBinding
+import com.example.grupo_pdm.databinding.FragmentMainPageBinding
+import com.example.grupo_pdm.databinding.FragmentMovieDetailBinding
+import com.example.grupo_pdm.ui.movie.categoryMovies.CategoryMovieFragmentArgs
+import com.example.grupo_pdm.ui.movie.mainPageScreen.MainPageViewModel
+import kotlinx.coroutines.launch
+import kotlin.getValue
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
+    private var _binding: FragmentMovieDetailBinding? = null
+    private val binding get() = _binding!!
+    private val args: MovieDetailFragmentArgs by navArgs()
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MovieDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MovieDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val viewModel: MovieDetailViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_detail, container, false)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentMovieDetailBinding.bind(view)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MovieDetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MovieDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        viewModel.loadMovie(args.movieId)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.movie.collect { result ->
+                if (result == null) return@collect
+                when (result) {
+                    is ApiResult.Loading -> {
+                        // show loading
+                    }
+                    is ApiResult.Success -> {
+                        val movie = result.data
+                        binding.tvTitle.text = movie.title
+                        binding.tvOverview.text = movie.synopsis ?: "No synopsis available."
+                        
+                        val date = movie.releaseDate ?: "Unknown Date"
+                        val rating = movie.rating?.toString() ?: "N/A"
+                        val genres = movie.genres?.joinToString(", ") ?: "Unknown Genre"
+                        
+                        binding.tvMeta.text = "$date • Rating: $rating • $genres"
+
+                        // TODO: Handle Cast (needs fetching per personId or expanded API)
+                        // TODO: Handle Poster (pictures list)
+                    }
+                    is ApiResult.Failure -> {
+                        android.widget.Toast.makeText(requireContext(), "Error: ${result.error.detail}", android.widget.Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
+        }
     }
 }

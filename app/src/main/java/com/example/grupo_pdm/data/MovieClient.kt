@@ -171,7 +171,19 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
-
+    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse>> = flow {
+        try {
+            val response = client.get("/movies/$movie_id")
+            if (response.status.isSuccess()) {
+                val movie = response.body<MovieResponse>()
+                emit(ApiResult.Success(movie))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
     fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse>>> = flow {
          try {
             val response = client.get("/movies?&genre=$categoryName")
@@ -231,6 +243,7 @@ object MovieServiceClient {
         android.util.Log.e("MovieClient", "Exception during login", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
     }
+
 
 
     data class Credentials(val username: String, val password: String)

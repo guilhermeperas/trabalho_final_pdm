@@ -25,7 +25,7 @@ class CategoryMovieFragment : Fragment(R.layout.fragment_category_movie_screen) 
 
     private val adapter = MovieAdapter { movie ->
         findNavController().navigate(
-            CategoryMovieFragmentDirections.actionCategoryMovieFragmentToMovieDetailsFragment(movie.id)
+            CategoryMovieFragmentDirections.actionCategoryMovieFragmentToMovieDetailFragment(movie.id)
         )
     }
 

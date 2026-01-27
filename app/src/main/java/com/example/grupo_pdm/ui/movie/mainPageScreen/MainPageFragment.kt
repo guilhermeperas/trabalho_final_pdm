@@ -28,9 +28,15 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
         )
     }
     private val newMovieAdapter = MovieAdapter { movie ->
-
+        findNavController().navigate(
+            MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
+        )
     }
     private val trendingMovieAdapter = MovieAdapter { movie ->
+        findNavController().navigate(
+            MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
+        )
+
     }
     private val actorAdapter = ActorHomeAdapter { person ->
         findNavController().navigate(
@@ -73,7 +79,8 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
                 }
             }
         }
-
+        viewLifecycleOwner.lifecycleScope.launch {
+        }
     }
 
     override fun onDestroyView() {
