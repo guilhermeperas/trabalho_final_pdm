@@ -30,14 +30,46 @@
         <action
             android:id="@+id/action_mainPage_to_peopleDetailFragment"
             app:destination="@id/peopleDetailFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_categoryMovieFragment"
+            app:destination="@id/categoryMovieFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/peopleDetailFragment"
         android:name="com.example.grupo_pdm.ui.people.details.PeopleDetailFragment"
-        android:label="fragment_people_detail"
-        tools:layout="@layout/fragment_people_detail">
+        android:label="fragment_actor"
+        tools:layout="@layout/fragment_actor">
         <argument
             android:name="personId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryMovieFragment"
+        android:name="com.example.grupo_pdm.ui.movie.categoryMovies.CategoryMovieFragment"
+        android:label="fragment_category_movie_screen"
+        tools:layout="@layout/fragment_category_movie_screen" >
+        <argument
+            android:name="category_name"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_categoryMovieFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieDetailFragment"
+        android:name="com.example.grupo_pdm.ui.movie.movieDetailScreen.MovieDetailFragment"
+        android:label="MovieDetailFragment" >
+        <action
+            android:id="@+id/action_movieDetailFragment_to_peopleDetailFragment"
+            app:destination="@id/peopleDetailFragment" />
+        <argument
+            android:name="movie_id"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_movieDetailFragment_to_categoryMovieFragment"
+            app:destination="@id/categoryMovieFragment" />
     </fragment>
 </navigation>

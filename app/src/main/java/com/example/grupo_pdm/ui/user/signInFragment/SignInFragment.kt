@@ -24,6 +24,17 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentSignInBinding.bind(view)
 
+        // Check for existing session
+        val prefs = requireActivity().getSharedPreferences("prefs", 0)
+        if (prefs.contains("username") && prefs.contains("userId") && prefs.contains("password")) {
+            val username = prefs.getString("username", "") ?: ""
+            val password = prefs.getString("password", "") ?: ""
+            
+            // Re-authenticate client
+            MovieServiceClient.setCredentials(username, password)
+            goToMain()
+        }
+
         binding.createBtn.setOnClickListener {
             findNavController().navigate(
                 SignInFragmentDirections.actionSignInFragmentToCreateAccountFragment()
@@ -52,6 +63,8 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                             requireActivity().getSharedPreferences("prefs", 0).edit {
                                 putString("username", username)
                                 putString("password", password)
+                                putString("role",result.data.role)
+                                putInt("userId", result.data.id)
                             }
                             goToMain()
                         }

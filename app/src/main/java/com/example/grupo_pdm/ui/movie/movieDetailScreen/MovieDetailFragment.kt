@@ -2,59 +2,110 @@ package com.example.grupo_pdm.ui.movie.movieDetailScreen
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.databinding.FragmentMovieDetailBinding
+import com.example.grupo_pdm.ui.adapters.CastAdapter
+import com.example.grupo_pdm.ui.adapters.GenreAdapter
+import com.example.grupo_pdm.ui.adapters.RatingAdapter
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
+    private var _binding: FragmentMovieDetailBinding? = null
+    private val binding get() = _binding!!
+    private val args: MovieDetailFragmentArgs by navArgs()
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MovieDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MovieDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val viewModel: MovieDetailViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val genreAdapter = GenreAdapter { genre ->
+        findNavController().navigate(
+            MovieDetailFragmentDirections.actionMovieDetailFragmentToCategoryMovieFragment(genre.name)
+        )
     }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_detail, container, false)
+    private val castAdapter = CastAdapter { cast ->
+        findNavController().navigate(
+            MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(cast.personId)
+        )
     }
+    private val ratingAdapter = RatingAdapter()
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MovieDetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MovieDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentMovieDetailBinding.bind(view)
+
+        binding.rvGenres.adapter = genreAdapter
+        binding.rvCast.adapter = castAdapter
+        binding.rvComments.adapter = ratingAdapter
+
+        viewModel.loadMovie(args.movieId)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.movie.collect { result ->
+                if (result == null) return@collect
+                when (result) {
+                    is ApiResult.Loading -> { /* show loading */ }
+                    is ApiResult.Success -> {
+                        val movie = result.data
+
+                        // Title
+                        binding.tvTitle.text = movie.title
+
+                        // Synopsis
+                        binding.tvOverview.text = movie.synopsis ?: "No synopsis available."
+
+                        // Meta: Date • Age
+                        val date = movie.releaseDate ?: "Unknown"
+                        val age = movie.minimumAge?.let { "$it+" } ?: "All ages"
+                        binding.tvMeta.text = "$date • Age: $age"
+
+                        // Rating with stars
+                        movie.rating?.let { rating ->
+                            binding.ratingBar.rating = (rating / 2).toFloat() // Convert 0-10 to 0-5 stars
+                            binding.tvRating.text = "$rating/10"
+                        } ?: run {
+                            binding.ratingBar.rating = 0f
+                            binding.tvRating.text = "No rating"
+                        }
+
+                        // Genres
+                        movie.genres?.let { genreAdapter.submitList(it) }
+
+                        // Director
+                        movie.director?.let { director ->
+                            binding.tvDirector.text = director.name
+                            binding.directorContainer.setOnClickListener {
+                                findNavController().navigate(
+                                    MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(director.personId)
+                                )
+                            }
+                        }
+
+                        movie.cast?.let { castAdapter.submitList(it) }
+                    }
+                    is ApiResult.Failure -> {
+                        android.widget.Toast.makeText(requireContext(), "Error: ${result.error.detail}", android.widget.Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
+        }
+        
+        // Observe ratings/comments
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.ratings.collect { result ->
+                if (result is ApiResult.Success) {
+                    ratingAdapter.submitList(result.data)
+                }
+            }
+        }
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,5 +1,6 @@
-package com.example.grupo_pdm.data
+    package com.example.grupo_pdm.data
 
+import android.graphics.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -107,8 +108,10 @@ object MovieServiceClient {
             defaultRequest {
                 contentType(ContentType.Application.Json)
 
-                getCredentials()?.run {
-                    basicAuth(username, password)
+                getCredentials()?.let { (username, password) ->
+                    val authString = "$username:$password"
+                    val encodedAuthString = Base64.encodeToString(authString.toByteArray(), Base64.NO_WRAP)
+                    header("Authorization", "Basic $encodedAuthString")
                 }
 
                 url {
@@ -122,7 +125,6 @@ object MovieServiceClient {
 
 
     fun getActors(): Flow<ApiResult<List<PersonResponse>>> = flow {
-        android.util.Log.d("MovieClient", "Fetching actors...")
         try {
             val response = client.get("/people")
             if (response.status.isSuccess()) {
@@ -138,7 +140,42 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
+    fun getCategories(): Flow<ApiResult<List<CategoryResponse>>> = flow {
 
+        try {
+            val response = client.get("/genres");
+            if (response.status.isSuccess()) {
+                val categories = response.body<List<CategoryResponse>>()
+                emit(ApiResult.Success(categories))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching categories", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+
+        }
+    }
+    
+    /**
+     * Fetches raw image bytes from /pictures/{id} endpoint.
+     * The API returns binary data directly, not JSON.
+     */
+    fun getPictureBytes(pictureId: Int): Flow<ApiResult<ByteArray>> = flow {
+        try {
+            val response = client.get("/pictures/$pictureId")
+            if (response.status.isSuccess()) {
+                val bytes = response.body<ByteArray>()
+                emit(ApiResult.Success(bytes))
+            } else {
+                emit(ApiResult.Failure(ProblemDetails("error", "Failed to fetch image", response.status.value, "Image fetch failed")))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching picture bytes $pictureId", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+    
     fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
         try {
             val response = client.get("/people/$id")
@@ -155,29 +192,102 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
+    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse>> = flow {
+        try {
+            val response = client.get("/movies/$movie_id")
+            if (response.status.isSuccess()) {
+                val movie = response.body<MovieResponse>()
+                emit(ApiResult.Success(movie))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse>>> = flow {
+         try {
+            val response = client.get("/movies?&genre=$categoryName")
+            if (response.status.isSuccess()) {
+                val movies = response.body<List<MovieResponse>>()
+                emit(ApiResult.Success(movies))
+            } else {
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                     android.util.Log.e("MovieClient", "Failed to parse error body", e)
+                    ProblemDetails(
+                        type = "error",
+                        title = "Api Error",
+                        status = response.status.value,
+                        detail = "Request failed with status ${response.status}"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+             android.util.Log.e("MovieClient", "Exception fetching cat movies", e)
+             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+
+    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse>>> = flow {
+        try {
+            val response = client.get("/movies?orderBy=$filter")
+            if (response.status.isSuccess()) {
+                val movies = response.body<List<MovieResponse>>()
+                emit(ApiResult.Success(movies))
+            } else {
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                    ProblemDetails(
+                        type = "error",
+                        title = "API Error",
+                        status = response.status.value,
+                        detail = "Failed to fetch ratings (${response.status})"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching ratings for movie ", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+
+    fun getRatings(movieId: Int): Flow<ApiResult<List<RatingResponse>>> = flow {
+        try {
+            val response = client.get("/movies/$movieId/ratings")
+            if (response.status.isSuccess()) {
+                val ratings = response.body<List<RatingResponse>>()
+                emit(ApiResult.Success(ratings))
+            } else {
+                // Handle error - API might not return ProblemDetails format
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                    ProblemDetails(
+                        type = "error",
+                        title = "API Error",
+                        status = response.status.value,
+                        detail = "Failed to fetch ratings (${response.status})"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching ratings for movie $movieId", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
 
     suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
         val response = client.post("/users/register") {
             setBody(request)
         }
         if (response.status.isSuccess()) {
-             // The API returns PrivateUserResponse usually, but let's check Swagger.
-             // Swagger says /users/register returns PrivateUserResponse.
-             // However, for immediate login or simplifying, we might want to map it or just return success.
-             // Let's assume the user wants to login immediately after or just navigate back.
-             // Wait, the return type in signature I wrote is LoginResponse...
-             // Swagger says:
-             // /users/register -> 200 OK -> PrivateUserResponse
-             // /users/login -> 200 OK -> LoginResponse
-             // I will change the return type to PrivateUserResponse to match API.
             ApiResult.Success(LoginResponse(0, request.username, "user")) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
-            // Actually, let's look at Model.kt. We have PrivateUserResponse? No.
-            // Let's add PrivateUserResponse to Model.kt if missing or just use simple mapping.
-            // Wait, I can't check Model.kt content again easily in this turn.
-            // The user wants "logic for create account".
-            // I'll implementation a simple Void/Boolean success or return the user data.
-            // Let's stick to returning ApiResult<Boolean> for simplicity or the actual response.
-            // I'll return ApiResult<Boolean> for "success".
             ApiResult.Success(LoginResponse(0, request.username, "user")) // Placeholder, effectively just "Success"
         } else {
             ApiResult.Failure(response.body())
@@ -205,6 +315,7 @@ object MovieServiceClient {
         android.util.Log.e("MovieClient", "Exception during login", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
     }
+
 
 
     data class Credentials(val username: String, val password: String)
