@@ -17,8 +17,8 @@ class RatingAdapter : ListAdapter<RatingResponse, RatingAdapter.RatingViewHolder
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(rating: RatingResponse) {
-            binding.tvUser.text = "User ${rating.author}"
-            binding.tvComment.text = rating.comment ?: ""
+            binding.tvUser.text = "User #${rating.author}"
+            binding.tvComment.text = rating.comment?.takeIf { it.isNotBlank() } ?: "No comment"
             binding.tvDate.text = "" // No date in API response
             binding.tvRating.text = "${rating.score}"
         }

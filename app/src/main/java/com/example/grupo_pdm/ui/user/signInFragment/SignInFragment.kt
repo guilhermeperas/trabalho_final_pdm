@@ -69,7 +69,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                             goToMain()
                         }
                         is ApiResult.Failure -> {
-                            Toast.makeText(requireContext(), "Login failed: ${result.error.detail}", Toast.LENGTH_LONG).show()
+                            android.util.Log.e("SignInFragment", "Login failed: ${result.error}")
                         }
 
                         is ApiResult.Loading -> setLoading(true)

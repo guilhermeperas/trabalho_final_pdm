@@ -2,7 +2,6 @@ package com.example.grupo_pdm.ui.movie.mainPageScreen
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +12,6 @@ import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
-
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
 import kotlinx.coroutines.launch
 
@@ -30,22 +28,33 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             MainPageDirections.actionMainPageToCategoryMovieFragment(category.name)
         )
     }
-    private val newMovieAdapter = MovieAdapter { movie ->
-        findNavController().navigate(
-            MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
-        )
-    }
-    private val trendingMovieAdapter = MovieAdapter { movie ->
-        findNavController().navigate(
-            MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
-        )
-
-    }
+    
+    private val newMovieAdapter = MovieAdapter(
+        onMovieClick = { movie ->
+            findNavController().navigate(
+                MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
+            )
+        },
+        onFavoriteClick = { movie ->
+            viewModel.toggleFavorite(movie.id)
+        }
+    )
+    
+    private val trendingMovieAdapter = MovieAdapter(
+        onMovieClick = { movie ->
+            findNavController().navigate(
+                MainPageDirections.actionMainPageToMovieDetailFragment(movie.id)
+            )
+        },
+        onFavoriteClick = { movie ->
+            viewModel.toggleFavorite(movie.id)
+        }
+    )
+    
     private val actorAdapter = ActorHomeAdapter { person ->
         findNavController().navigate(
             MainPageDirections.actionMainPageToPeopleDetailFragment(person.id)
         )
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,6 +64,12 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
         setupRecyclerViews()
         setupRandomMovieClick()
         observeData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Refresh favorites when returning from detail screen
+        viewModel.loadFavorites()
     }
     
     private fun setupRecyclerViews() {
@@ -79,7 +94,9 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             viewModel.actors.collect { result ->
                  when (result) {
                     is ApiResult.Success -> actorAdapter.submitList(result.data)
-                    is ApiResult.Failure -> Toast.makeText(requireContext(), "Failed to load actors: ${result.error.detail}", Toast.LENGTH_SHORT).show()
+                    is ApiResult.Failure -> {
+                        android.util.Log.e("MainPageFragment", "Failed to load actors: ${result.error}")
+                    }
                     else -> {}
                 }
             }
@@ -88,7 +105,9 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             viewModel.categories.collect { result ->
                 when (result) {
                     is ApiResult.Success -> categoriesAdapter.submitList(result.data)
-                    is ApiResult.Failure -> Toast.makeText(requireContext(), "Failed to load categories: ${result.error.detail}", Toast.LENGTH_SHORT).show()
+                    is ApiResult.Failure -> {
+                        android.util.Log.e("MainPageFragment", "Failed to load categories: ${result.error}")
+                    }
                     else -> {}
                 }
             }
@@ -97,6 +116,9 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             viewModel.newMovies.collect { result ->
                 when (result) {
                     is ApiResult.Success -> newMovieAdapter.submitList(result.data)
+                    is ApiResult.Failure -> {
+                        android.util.Log.e("MainPageFragment", "Failed to load new movies: ${result.error}")
+                    }
                     else -> {}
                 }
             }
@@ -105,6 +127,9 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             viewModel.trendingMovies.collect { result ->
                 when (result) {
                     is ApiResult.Success -> trendingMovieAdapter.submitList(result.data)
+                    is ApiResult.Failure -> {
+                        android.util.Log.e("MainPageFragment", "Failed to load trending movies: ${result.error}")
+                    }
                     else -> {}
                 }
             }
@@ -118,6 +143,13 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
                 }
             }
         }
+        // Observe favorite IDs and update adapters
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.favoriteIds.collect { favoriteIds ->
+                newMovieAdapter.updateFavorites(favoriteIds)
+                trendingMovieAdapter.updateFavorites(favoriteIds)
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -125,4 +157,3 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
         _binding = null
     }
 }
-

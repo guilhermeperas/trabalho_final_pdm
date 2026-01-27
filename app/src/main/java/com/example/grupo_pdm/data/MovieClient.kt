@@ -15,7 +15,9 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -258,11 +260,31 @@ object MovieServiceClient {
 
     fun getRatings(movieId: Int): Flow<ApiResult<List<RatingResponse>>> = flow {
         try {
-            val response = client.get("/movies/$movieId/ratings")
+            val url = "/movies/$movieId/ratings"
+            android.util.Log.d("MovieClient", "=== RATINGS API CALL ===")
+            android.util.Log.d("MovieClient", "GET $url")
+            
+            val response = client.get(url)
+            
+            android.util.Log.d("MovieClient", "Response Status: ${response.status}")
+            
+            // Try to read raw body for debugging
+            val rawBody = try {
+                response.bodyAsText()
+            } catch (e: Exception) {
+                "Could not read body: ${e.message}"
+            }
+            android.util.Log.d("MovieClient", "Response Body: $rawBody")
+            
             if (response.status.isSuccess()) {
                 val ratings = response.body<List<RatingResponse>>()
+                android.util.Log.d("MovieClient", "Parsed ${ratings.size} ratings successfully")
                 emit(ApiResult.Success(ratings))
             } else {
+                android.util.Log.e("MovieClient", "=== RATINGS API ERROR ===")
+                android.util.Log.e("MovieClient", "Status: ${response.status.value} ${response.status.description}")
+                android.util.Log.e("MovieClient", "Body: $rawBody")
+                
                 // Handle error - API might not return ProblemDetails format
                 val errorDetails = try {
                     response.body<ProblemDetails>()
@@ -271,17 +293,54 @@ object MovieServiceClient {
                         type = "error",
                         title = "API Error",
                         status = response.status.value,
-                        detail = "Failed to fetch ratings (${response.status})"
+                        detail = "Failed to fetch ratings (${response.status}) - Body: $rawBody"
                     )
                 }
                 emit(ApiResult.Failure(errorDetails))
             }
         } catch (e: Exception) {
-            android.util.Log.e("MovieClient", "Exception fetching ratings for movie $movieId", e)
+            android.util.Log.e("MovieClient", "=== RATINGS EXCEPTION ===")
+            android.util.Log.e("MovieClient", "Exception type: ${e.javaClass.simpleName}")
+            android.util.Log.e("MovieClient", "Message: ${e.message}")
+            android.util.Log.e("MovieClient", "Stack trace:", e)
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
 
+    suspend fun submitRating(movieId: Int, request: CreateRatingRequest): ApiResult<Unit> = try {
+        val response = client.post("/movies/$movieId/ratings") {
+            setBody(request)
+        }
+        if (response.status.isSuccess()) {
+            ApiResult.Success(Unit)
+        } else {
+            val errorDetails = try {
+                response.body<ProblemDetails>()
+            } catch (e: Exception) {
+                ProblemDetails("error", "API Error", response.status.value, "Failed to submit rating")
+            }
+            ApiResult.Failure(errorDetails)
+        }
+    } catch (e: Exception) {
+        android.util.Log.e("MovieClient", "Exception submitting rating for movie $movieId", e)
+        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
+
+    suspend fun markAsFavorite(movieId: Int, value: Boolean): ApiResult<Unit> = try {
+        android.util.Log.d("MovieClient", "=== MARK AS FAVORITE ===")
+        val response = client.put("/movies/$movieId/mark-as-favorite?value=$value")
+        
+        if (response.status.isSuccess()) {
+            ApiResult.Success(Unit)
+        } else {
+            val errorBody = response.bodyAsText()
+            android.util.Log.e("MovieClient", "Error marking as favorite: $errorBody")
+            ApiResult.Failure(ProblemDetails("error", "Failed to update favorite", response.status.value, errorBody))
+        }
+    } catch (e: Exception) {
+        android.util.Log.e("MovieClient", "Exception marking as favorite $movieId", e)
+        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
     suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
         val response = client.post("/users/register") {
             setBody(request)
