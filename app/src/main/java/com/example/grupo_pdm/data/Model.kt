@@ -183,23 +183,18 @@ data class LoginResponse(
     val description: String? = null
 )
 
-// COMMENT
+// RATING (from /movies/{id}/ratings endpoint)
 @Serializable
-data class CommentResponse(
-    val id: Int,
-    val userId: Int,
-    val username: String? = null,
-    val movieId: Int,
-    val content: String,
-    val rating: Double? = null,
-    val createdAt: String? = null
+data class RatingResponse(
+    val score: Int,           // 0-5 rating
+    val comment: String? = null,
+    val author: Int           // user_id
 )
 
 @Serializable
-data class CreateCommentRequest(
-    val movieId: Int,
-    val content: String,
-    val rating: Double? = null
+data class CreateRatingRequest(
+    val score: Int,
+    val comment: String? = null
 )
 
 @Serializable

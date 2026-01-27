@@ -12,7 +12,7 @@ import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentMovieDetailBinding
 import com.example.grupo_pdm.ui.adapters.CastAdapter
 import com.example.grupo_pdm.ui.adapters.GenreAdapter
-import com.example.grupo_pdm.ui.adapters.ImageAdapter
+import com.example.grupo_pdm.ui.adapters.RatingAdapter
 import kotlinx.coroutines.launch
 
 class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
@@ -22,23 +22,25 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
 
     private val viewModel: MovieDetailViewModel by viewModels()
 
-    private val genreAdapter = GenreAdapter { /* genre click */ }
+    private val genreAdapter = GenreAdapter { genre ->
+        findNavController().navigate(
+            MovieDetailFragmentDirections.actionMovieDetailFragmentToCategoryMovieFragment(genre.name)
+        )
+    }
     private val castAdapter = CastAdapter { cast ->
-        // Navigate to person detail when cast is clicked
         findNavController().navigate(
             MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(cast.personId)
         )
     }
-    private val galleryAdapter = ImageAdapter()
+    private val ratingAdapter = RatingAdapter()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieDetailBinding.bind(view)
 
-        // Setup adapters
         binding.rvGenres.adapter = genreAdapter
         binding.rvCast.adapter = castAdapter
-        binding.rvGallery.adapter = galleryAdapter
+        binding.rvComments.adapter = ratingAdapter
 
         viewModel.loadMovie(args.movieId)
 
@@ -83,15 +85,20 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                             }
                         }
 
-                        // Gallery pictures
-                        movie.pictures?.let { galleryAdapter.submitList(it) }
-
-                        // Cast
                         movie.cast?.let { castAdapter.submitList(it) }
                     }
                     is ApiResult.Failure -> {
                         android.widget.Toast.makeText(requireContext(), "Error: ${result.error.detail}", android.widget.Toast.LENGTH_SHORT).show()
                     }
+                }
+            }
+        }
+        
+        // Observe ratings/comments
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.ratings.collect { result ->
+                if (result is ApiResult.Success) {
+                    ratingAdapter.submitList(result.data)
                 }
             }
         }

@@ -63,6 +63,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                             requireActivity().getSharedPreferences("prefs", 0).edit {
                                 putString("username", username)
                                 putString("password", password)
+                                putString("role",result.data.role)
                                 putInt("userId", result.data.id)
                             }
                             goToMain()

@@ -40,8 +40,8 @@
     <fragment
         android:id="@+id/peopleDetailFragment"
         android:name="com.example.grupo_pdm.ui.people.details.PeopleDetailFragment"
-        android:label="fragment_people_detail"
-        tools:layout="@layout/fragment_people_detail">
+        android:label="fragment_actor"
+        tools:layout="@layout/fragment_actor">
         <argument
             android:name="personId"
             app:argType="integer" />
@@ -68,5 +68,8 @@
         <argument
             android:name="movie_id"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_movieDetailFragment_to_categoryMovieFragment"
+            app:destination="@id/categoryMovieFragment" />
     </fragment>
 </navigation>

@@ -1,5 +1,6 @@
     package com.example.grupo_pdm.data
 
+import android.graphics.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -156,17 +157,21 @@ object MovieServiceClient {
         }
     }
     
-    fun getPicture(pictureId: Int): Flow<ApiResult<PictureResponse>> = flow {
+    /**
+     * Fetches raw image bytes from /pictures/{id} endpoint.
+     * The API returns binary data directly, not JSON.
+     */
+    fun getPictureBytes(pictureId: Int): Flow<ApiResult<ByteArray>> = flow {
         try {
             val response = client.get("/pictures/$pictureId")
             if (response.status.isSuccess()) {
-                val picture = response.body<PictureResponse>()
-                emit(ApiResult.Success(picture))
+                val bytes = response.body<ByteArray>()
+                emit(ApiResult.Success(bytes))
             } else {
-                emit(ApiResult.Failure(response.body()))
+                emit(ApiResult.Failure(ProblemDetails("error", "Failed to fetch image", response.status.value, "Image fetch failed")))
             }
         } catch (e: Exception) {
-            android.util.Log.e("MovieClient", "Exception fetching picture $pictureId", e)
+            android.util.Log.e("MovieClient", "Exception fetching picture bytes $pictureId", e)
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
@@ -226,17 +231,53 @@ object MovieServiceClient {
         }
     }
 
-    fun getComments(movieId: Int): Flow<ApiResult<List<CommentResponse>>> = flow {
+    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse>>> = flow {
         try {
-            val response = client.get("/movies/$movieId/comments")
+            val response = client.get("/movies?orderBy=$filter")
             if (response.status.isSuccess()) {
-                val comments = response.body<List<CommentResponse>>()
-                emit(ApiResult.Success(comments))
+                val movies = response.body<List<MovieResponse>>()
+                emit(ApiResult.Success(movies))
             } else {
-                emit(ApiResult.Failure(response.body()))
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                    ProblemDetails(
+                        type = "error",
+                        title = "API Error",
+                        status = response.status.value,
+                        detail = "Failed to fetch ratings (${response.status})"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
             }
         } catch (e: Exception) {
-            android.util.Log.e("MovieClient", "Exception fetching comments for movie $movieId", e)
+            android.util.Log.e("MovieClient", "Exception fetching ratings for movie ", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+
+    fun getRatings(movieId: Int): Flow<ApiResult<List<RatingResponse>>> = flow {
+        try {
+            val response = client.get("/movies/$movieId/ratings")
+            if (response.status.isSuccess()) {
+                val ratings = response.body<List<RatingResponse>>()
+                emit(ApiResult.Success(ratings))
+            } else {
+                // Handle error - API might not return ProblemDetails format
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                    ProblemDetails(
+                        type = "error",
+                        title = "API Error",
+                        status = response.status.value,
+                        detail = "Failed to fetch ratings (${response.status})"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching ratings for movie $movieId", e)
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }

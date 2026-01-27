@@ -7,7 +7,6 @@ import androidx.lifecycle.AndroidViewModel
 import kotlin.uuid.ExperimentalUuidApi
 
 
-
 import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.CategoryResponse
@@ -33,6 +32,9 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
     private val _actors = MutableStateFlow<ApiResult<List<PersonResponse>>?>(null)
     val actors: StateFlow<ApiResult<List<PersonResponse>>?> = _actors.asStateFlow()
 
+    private val _randomMovie = MutableStateFlow<MovieResponse?>(null)
+    val randomMovie: StateFlow<MovieResponse?> = _randomMovie.asStateFlow()
+
     init {
         loadData()
     }
@@ -43,10 +45,15 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
                 MovieServiceClient.getCategories().collect { _categories.value = it }
             }
             launch {
-                //MovieServiceClient.getNewMovies().collect { _newMovies.value = it }
+                MovieServiceClient.getMoviesSortedBy("releaseDate").collect { result ->
+                    if (result is ApiResult.Success) {
+                        _randomMovie.value = result.data.random()
+                        _newMovies.value = result
+                    }
+                }
             }
             launch {
-                //MovieServiceClient.getTrendingMovies().collect { _trendingMovies.value = it }
+                MovieServiceClient.getMoviesSortedBy("rating").collect { _trendingMovies.value = it }
             }
             launch {
                 MovieServiceClient.getActors().collect { _actors.value = it }
@@ -54,3 +61,4 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 }
+
