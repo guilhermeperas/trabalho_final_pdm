@@ -3,6 +3,7 @@ package com.example.grupo_pdm.ui.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
 
@@ -11,19 +12,37 @@ import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
  * Used for both "New" and "Trending" sections on the main page.
  */
 class MovieAdapter(
-    onMovieClick: (MovieResponse) -> Unit = {}
+    private val onMovieClick: (MovieResponse) -> Unit = {},
+    private val onFavoriteClick: (MovieResponse) -> Unit = {}
 ) : BaseAdapter<MovieResponse, MovieAdapter.MovieViewHolder>(onItemClick = onMovieClick) {
+
+    private var favoriteIds: Set<Int> = emptySet()
+
+    fun updateFavorites(ids: Set<Int>) {
+        favoriteIds = ids
+        notifyDataSetChanged()
+    }
 
     inner class MovieViewHolder(private val binding: ItemMovieRecoBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(movie: MovieResponse) {
             binding.tvTitle.text = movie.title
-            // TODO: Load poster image with Glide/Coil
-            // Glide.with(binding.root).load(movie.posterUrl).into(binding.ivPoster)
+            
+            // Show favorite status
+            val isFavorite = favoriteIds.contains(movie.id)
+            binding.ivFavorite.setImageResource(
+                if (isFavorite) R.drawable.ic_heart_filled_24 else R.drawable.ic_heart_outline_24
+            )
 
+            // Card click -> navigate to detail
             binding.root.setOnClickListener {
-                onItemClick(movie)
+                onMovieClick(movie)
+            }
+
+            // Heart click -> toggle favorite (doesn't navigate)
+            binding.ivFavorite.setOnClickListener {
+                onFavoriteClick(movie)
             }
         }
     }

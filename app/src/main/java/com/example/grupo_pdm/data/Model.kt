@@ -116,7 +116,7 @@ data class MovieResponse(
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null,
-    val rating: Double? = null
+    val favorite: Boolean? = null  // From API - true if user has favorited this movie
 )
 
 @Serializable

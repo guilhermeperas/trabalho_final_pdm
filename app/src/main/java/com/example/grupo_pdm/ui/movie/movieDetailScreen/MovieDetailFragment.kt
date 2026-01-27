@@ -1,8 +1,10 @@
 package com.example.grupo_pdm.ui.movie.movieDetailScreen
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
+import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -38,12 +40,59 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieDetailBinding.bind(view)
 
+        // Setup horizontal layout managers
+        binding.rvGenres.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            requireContext(),
+            androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+            false
+        )
         binding.rvGenres.adapter = genreAdapter
+
+        binding.rvCast.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
+            requireContext(),
+            androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+            false
+        )
         binding.rvCast.adapter = castAdapter
         binding.rvComments.adapter = ratingAdapter
 
         viewModel.loadMovie(args.movieId)
 
+        // Submit review button
+        binding.btnSubmitReview.setOnClickListener {
+            val score = binding.userRatingBar.rating.toInt()
+            if (score == 0) {
+                Toast.makeText(requireContext(), "Please select a rating", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val comment = binding.etComment.text.toString()
+            viewModel.submitRating(score, comment)
+        }
+
+        // View all reviews button
+        binding.btnViewAllReviews.setOnClickListener {
+            findNavController().navigate(
+                MovieDetailFragmentDirections.actionMovieDetailFragmentToAllReviewsFragment(args.movieId)
+            )
+        }
+
+        // Favorite button
+        binding.btnFavorite.setOnClickListener {
+            viewModel.toggleFavorite()
+        }
+
+        // Observe favorite state
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isFavorite.collect { isFavorite ->
+                if (isFavorite) {
+                    binding.btnFavorite.setImageResource(R.drawable.ic_heart_filled_24)
+                } else {
+                    binding.btnFavorite.setImageResource(R.drawable.ic_heart_outline_24)
+                }
+            }
+        }
+
+        // Observe movie data
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movie.collect { result ->
                 if (result == null) return@collect
@@ -63,14 +112,9 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                         val age = movie.minimumAge?.let { "$it+" } ?: "All ages"
                         binding.tvMeta.text = "$date • Age: $age"
 
-                        // Rating with stars
-                        movie.rating?.let { rating ->
-                            binding.ratingBar.rating = (rating / 2).toFloat() // Convert 0-10 to 0-5 stars
-                            binding.tvRating.text = "$rating/10"
-                        } ?: run {
-                            binding.ratingBar.rating = 0f
-                            binding.tvRating.text = "No rating"
-                        }
+                        // Rating display disabled for now
+                        binding.ratingBar.rating = 0f
+                        binding.tvRating.text = "N/A"
 
                         // Genres
                         movie.genres?.let { genreAdapter.submitList(it) }
@@ -88,7 +132,7 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                         movie.cast?.let { castAdapter.submitList(it) }
                     }
                     is ApiResult.Failure -> {
-                        android.widget.Toast.makeText(requireContext(), "Error: ${result.error.detail}", android.widget.Toast.LENGTH_SHORT).show()
+                        android.util.Log.e("MovieDetailFragment", "Error loading movie: ${result.error.title} - ${result.error.detail} (Status: ${result.error.status})")
                     }
                 }
             }
@@ -97,8 +141,50 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         // Observe ratings/comments
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ratings.collect { result ->
-                if (result is ApiResult.Success) {
-                    ratingAdapter.submitList(result.data)
+                when (result) {
+                    is ApiResult.Success -> {
+                        ratingAdapter.submitList(result.data)
+                    }
+                    is ApiResult.Failure -> {
+                        android.util.Log.e("MovieDetailFragment", "Error loading ratings: ${result.error.detail}")
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        // Observe hasReviewed state
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hasReviewed.collect { hasReviewed ->
+                binding.reviewInputContainer.isVisible = !hasReviewed
+                binding.tvAlreadyReviewed.isVisible = hasReviewed
+            }
+        }
+
+        // Observe submit result
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.submitResult.collect { result ->
+                when (result) {
+                    is ApiResult.Loading -> {
+                        binding.btnSubmitReview.isEnabled = false
+                        binding.btnSubmitReview.text = "Submitting..."
+                    }
+                    is ApiResult.Success -> {
+                        binding.btnSubmitReview.isEnabled = true
+                        binding.btnSubmitReview.text = "Submit Review"
+                        Toast.makeText(requireContext(), "Review submitted!", Toast.LENGTH_SHORT).show()
+                        binding.etComment.setText("")
+                        binding.userRatingBar.rating = 0f
+                        viewModel.resetSubmitResult()
+                    }
+                    is ApiResult.Failure -> {
+                        binding.btnSubmitReview.isEnabled = true
+                        binding.btnSubmitReview.text = "Submit Review"
+                        android.util.Log.e("MovieDetailFragment", "Error submitting review: ${result.error.detail}")
+                        Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show()
+                        viewModel.resetSubmitResult()
+                    }
+                    null -> {}
                 }
             }
         }

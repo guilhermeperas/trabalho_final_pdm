@@ -128,7 +128,7 @@ class CreateAccountFragment : Fragment(R.layout.fragment_create_account) {
                         findNavController().popBackStack()
                     }
                     is ApiResult.Failure -> {
-                        Toast.makeText(requireContext(), "Registration failed Unknown error", Toast.LENGTH_LONG).show()
+                        android.util.Log.e("CreateAccountFragment", "Registration failed: ${result.error}")
                     }
                     else -> {}
                 }

@@ -71,5 +71,17 @@
         <action
             android:id="@+id/action_movieDetailFragment_to_categoryMovieFragment"
             app:destination="@id/categoryMovieFragment" />
+        <action
+            android:id="@+id/action_movieDetailFragment_to_allReviewsFragment"
+            app:destination="@id/allReviewsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/allReviewsFragment"
+        android:name="com.example.grupo_pdm.ui.movie.allReviews.AllReviewsFragment"
+        android:label="AllReviewsFragment"
+        tools:layout="@layout/fragment_all_reviews">
+        <argument
+            android:name="movie_id"
+            app:argType="integer" />
     </fragment>
 </navigation>
