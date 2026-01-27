@@ -155,6 +155,22 @@ object MovieServiceClient {
 
         }
     }
+    
+    fun getPicture(pictureId: Int): Flow<ApiResult<PictureResponse>> = flow {
+        try {
+            val response = client.get("/pictures/$pictureId")
+            if (response.status.isSuccess()) {
+                val picture = response.body<PictureResponse>()
+                emit(ApiResult.Success(picture))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching picture $pictureId", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+    
     fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
         try {
             val response = client.get("/people/$id")
@@ -207,6 +223,21 @@ object MovieServiceClient {
         } catch (e: Exception) {
              android.util.Log.e("MovieClient", "Exception fetching cat movies", e)
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+
+    fun getComments(movieId: Int): Flow<ApiResult<List<CommentResponse>>> = flow {
+        try {
+            val response = client.get("/movies/$movieId/comments")
+            if (response.status.isSuccess()) {
+                val comments = response.body<List<CommentResponse>>()
+                emit(ApiResult.Success(comments))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching comments for movie $movieId", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
 

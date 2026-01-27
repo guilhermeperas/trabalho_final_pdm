@@ -18,6 +18,7 @@ import kotlin.uuid.ExperimentalUuidApi
 @Serializable
 data class CastMemberResponse(
     val personId: Int,
+    val name: String? = null,
     val character: String
 )
 
@@ -53,15 +54,65 @@ data class CreateGenreRequest(
     val description: String? = null
 )
 
+// DIRECTOR (embedded in Movie)
+@Serializable
+data class DirectorResponse(
+    val personId: Int,
+    val name: String,
+    val picture: PictureResponse? = null
+)
+
+/**
+ * Custom serializer for genres that handles both:
+ * - List of strings: ["Horror", "Drama"] (from movie list endpoint)
+ * - List of objects: [{"id": 1, "name": "Horror"}] (from movie detail endpoint)
+ */
+object GenreListSerializer : KSerializer<List<GenreResponse>?> {
+    override val descriptor: SerialDescriptor = 
+        kotlinx.serialization.builtins.ListSerializer(kotlinx.serialization.json.JsonElement.serializer()).descriptor
+
+    override fun serialize(encoder: Encoder, value: List<GenreResponse>?) {
+        if (value == null) {
+            encoder.encodeNull()
+        } else {
+            val listSerializer = kotlinx.serialization.builtins.ListSerializer(GenreResponse.serializer())
+            encoder.encodeSerializableValue(listSerializer, value)
+        }
+    }
+
+    override fun deserialize(decoder: Decoder): List<GenreResponse>? {
+        val jsonDecoder = decoder as? kotlinx.serialization.json.JsonDecoder
+            ?: return null
+        val element = jsonDecoder.decodeJsonElement()
+        if (element is kotlinx.serialization.json.JsonNull) return null
+        if (element !is kotlinx.serialization.json.JsonArray) return null
+        
+        return element.map { item ->
+            when (item) {
+                is kotlinx.serialization.json.JsonPrimitive -> {
+                    // It's a string like "Horror"
+                    GenreResponse(id = 0, name = item.content)
+                }
+                is kotlinx.serialization.json.JsonObject -> {
+                    // It's a full object
+                    kotlinx.serialization.json.Json.decodeFromJsonElement(GenreResponse.serializer(), item)
+                }
+                else -> GenreResponse(id = 0, name = "Unknown")
+            }
+        }
+    }
+}
+
 // MOVIE
 @Serializable
 data class MovieResponse(
     val id: Int,
     val title: String,
     val synopsis: String? = null,
-    val genres: List<String>? = null, // Genre names
-    val releaseDate: String? = null, // Format: "YYYY-MM-DD"
-    val directorId: Int? = null,
+    @Serializable(with = GenreListSerializer::class)
+    val genres: List<GenreResponse>? = null,
+    val releaseDate: String? = null,
+    val director: DirectorResponse? = null,
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null,
@@ -100,8 +151,11 @@ data class CreatePersonRequest(
 @Serializable
 data class PictureResponse(
     val id: Int,
+    val mainPicture: Boolean? = null,
     val filename: String? = null,
-    val data: String? = null,
+    val contentType: String? = null,
+    val description: String? = null,
+    val data: String? = null
 )
 
 @Serializable
@@ -128,6 +182,26 @@ data class LoginResponse(
     val role: String,
     val description: String? = null
 )
+
+// COMMENT
+@Serializable
+data class CommentResponse(
+    val id: Int,
+    val userId: Int,
+    val username: String? = null,
+    val movieId: Int,
+    val content: String,
+    val rating: Double? = null,
+    val createdAt: String? = null
+)
+
+@Serializable
+data class CreateCommentRequest(
+    val movieId: Int,
+    val content: String,
+    val rating: Double? = null
+)
+
 @Serializable
 data class ProblemDetails(
     val type: String,
