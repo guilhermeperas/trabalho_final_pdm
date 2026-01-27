@@ -58,16 +58,30 @@ data class CreateGenreRequest(
 data class MovieResponse(
     val id: Int,
     val title: String,
-    val synopsis: String? = null,
-    val genres: List<Int>? = null, // id genre
+    val genres: List<String> = emptyList(),
+    val director: DirectorShort? = null,
+    val mainPicture: PictureShort? = null,
     val releaseDate: String? = null, // Format: "YYYY-MM-DD"
-    val directorId: Int? = null,
+    val favorite: Boolean = false,
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null,
     val rating: Double? = null
 )
-
+@Serializable
+data class DirectorShort(
+    val personId: Int,
+    val name: String,
+    val picture: PictureShort? = null
+)
+@Serializable
+data class PictureShort(
+    val id: Int,
+    val mainPicture: Boolean = false,
+    val filename: String? = null,
+    val contentType: String? = null,
+    val description: String? = null
+)
 @Serializable
 data class CreateMovieRequest(
     val title: String,

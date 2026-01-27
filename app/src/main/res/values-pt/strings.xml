@@ -25,4 +25,8 @@
     <!-- Accessibility / misc -->
     <string name="cd_poster">Poster</string>
     <string name="cd_actor">Ator</string>
+
+    <string name="msg_no_results">Sem resultados.</string>
+    <string name="msg_error_loading">Erro ao carregar resultados.</string>
+
 </resources>

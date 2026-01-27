@@ -11,6 +11,9 @@
     <action
         android:id="@+id/actionGlobalMainPage"
         app:destination="@id/mainPage"/>
+    <action
+        android:id="@+id/actionGlobalSignInFragment"
+        app:destination="@+id/UserProfile"/>
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.grupo_pdm.ui.user.signInFragment.SignInFragment"
@@ -57,7 +60,9 @@
             app:argType="string"
             android:defaultValue="" />
     </fragment>
-
-
-
+    <fragment
+        android:id="@+id/UserProfile"
+        android:name="com.example.grupo_pdm.ui.user.userProfileFragment.UserPerfilFragment"
+        android:label="userProfile">
+    </fragment>
 </navigation>

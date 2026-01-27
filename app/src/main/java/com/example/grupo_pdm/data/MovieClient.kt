@@ -13,8 +13,10 @@ import android.util.Base64
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -208,4 +210,97 @@ object MovieServiceClient {
 
 
     data class Credentials(val username: String, val password: String)
+
+    /**
+     * Pesquisa filmes por TÍTULO usando o endpoint GET /movies com query params.
+     *
+     * Retorna um Flow<ApiResult<List<MovieResponse>>> porque:
+     * - Flow: permite emitir vários estados ao longo do tempo (Loading -> Success/Failure)
+     * - ApiResult: padroniza estados da chamada (Loading/Success/Failure)
+     */
+    fun getMoviesByTitle(title: String): Flow<ApiResult<List<MovieResponse>>> = flow {
+        // 1) Informa a UI que a pesquisa começou (para mostrar ProgressBar, etc.)
+        emit(ApiResult.Loading(0))
+
+        try {
+            // 2) Faz o GET /movies com parâmetros de pesquisa (query string)
+            val response = client.get("/movies") {
+                parameter("title", title)
+                parameter("fromRating", 0)
+                parameter("toRating", 5)
+                parameter("favoritesOnly", false)
+                parameter("sortBy", "releaseDate")     // ou "rating" / "title"
+                parameter("sortOrder", "desc")         // "asc" / "desc"
+            }
+            // 3) Interpreta a resposta
+            if (response.status.isSuccess()) {
+                val movies = response.body<List<MovieResponse>>()
+                emit(ApiResult.Success(movies))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            // 4) Erro de rede/parse/etc.: emite Failure com um ProblemDetails “genérico”
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error")
+                )
+            )
+        }
+    }
+    /**
+     * Vai buscar a IMAGEM (bytes) de um filme.
+     * Endpoint: GET /movies/{id}/pictures/{pictureId}
+     *
+     * Porquê "suspend":
+     * - É uma chamada única, não precisamos de Flow aqui
+     * - Pode ser chamada dentro de coroutine (ex: no adapter)
+     *
+     * Retorna ByteArray?:
+     * - ByteArray com a imagem quando dá sucesso
+     * - null quando falha (para manter simples no adapter)
+     */
+    suspend fun getMoviePictureBytes(movieId: Int, pictureId: Int): ByteArray? {
+        return try {
+            val response = client.get("/movies/$movieId/pictures/$pictureId")
+            if (response.status.isSuccess()) response.bodyAsBytes() else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /**
+     * Recomendações por GÉNERO.
+     * Usa GET /movies com query param "genre", pedindo "count" itens.
+     *
+     * Observação:
+     * - Aqui você está a ordenar por "rating desc" para recomendar “os melhores”
+     * - Mantém filtros básicos (favoritesOnly=false, rating 0..5)
+     */
+    fun getMoviesByGenre(genre: String, count: Int = 10): Flow<ApiResult<List<MovieResponse>>> = flow {
+        emit(ApiResult.Loading(0))
+        try {
+            val response = client.get("/movies") {
+                parameter("genre", genre)
+                parameter("count", count)
+                parameter("sortBy", "rating")
+                parameter("sortOrder", "desc")
+                parameter("favoritesOnly", false)
+                parameter("fromRating", 0)
+                parameter("toRating", 5)
+            }
+
+            if (response.status.isSuccess()) {
+                emit(ApiResult.Success(response.body()))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
 }
