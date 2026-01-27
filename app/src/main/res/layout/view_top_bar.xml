@@ -30,6 +30,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_search"
+        app:hintTextColor="?attr/colorOnSurfaceVariant"
         app:endIconMode="custom"
         app:endIconDrawable="@android:drawable/ic_menu_search"
         app:layout_constraintStart_toEndOf="@id/btnHome"
@@ -41,10 +42,12 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:imeOptions="actionSearch"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:textColor="?attr/colorOnSurface" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

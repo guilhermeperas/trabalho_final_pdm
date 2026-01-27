@@ -10,6 +10,8 @@ import androidx.navigation.fragment.navArgs
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentPeopleDetailBinding
+import com.example.grupo_pdm.ui.components.TopBarView
+import com.example.grupo_pdm.ui.components.bindTopBarNavigation
 import kotlinx.coroutines.launch
 
 class PeopleDetailFragment : Fragment(R.layout.fragment_people_detail) {
@@ -21,6 +23,8 @@ class PeopleDetailFragment : Fragment(R.layout.fragment_people_detail) {
     private val viewModel: PeopleDetailViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val topBar = view.findViewById<TopBarView>(R.id.topBar)
+        bindTopBarNavigation(topBar)
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentPeopleDetailBinding.bind(view)
 

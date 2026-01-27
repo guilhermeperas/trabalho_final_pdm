@@ -2,9 +2,15 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph.xml"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/signInFragment">
 
+    <action
+        android:id="@+id/action_global_searchPage"
+        app:destination="@id/searchPage" />
+    <action
+        android:id="@+id/actionGlobalMainPage"
+        app:destination="@id/mainPage"/>
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.grupo_pdm.ui.user.signInFragment.SignInFragment"
@@ -17,6 +23,7 @@
             android:id="@+id/action_signInFragment_to_mainPage"
             app:destination="@id/mainPage" />
     </fragment>
+
     <fragment
         android:id="@+id/createAccountFragment"
         android:name="com.example.grupo_pdm.ui.user.createAccountFragment.CreateAccountFragment"
@@ -30,9 +37,6 @@
         <action
             android:id="@+id/action_mainPage_to_peopleDetailFragment"
             app:destination="@id/peopleDetailFragment" />
-        <action
-            android:id="@+id/action_mainPage_to_searchPage"
-            app:destination="@id/searchPage" />
     </fragment>
     <fragment
         android:id="@+id/peopleDetailFragment"
@@ -46,5 +50,14 @@
     <fragment
         android:id="@+id/searchPage"
         android:name="com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage"
-        android:label="SearchPage" />
+        android:label="searchPage">
+
+        <argument
+            android:name="query"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
+
+
+
 </navigation>
