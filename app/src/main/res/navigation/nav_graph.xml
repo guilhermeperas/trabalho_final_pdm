@@ -30,6 +30,12 @@
         <action
             android:id="@+id/action_mainPage_to_peopleDetailFragment"
             app:destination="@id/peopleDetailFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_categoryMovieFragment"
+            app:destination="@id/categoryMovieFragment" />
     </fragment>
     <fragment
         android:id="@+id/peopleDetailFragment"
@@ -39,5 +45,29 @@
         <argument
             android:name="personId"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/movieDetailsFragment"
+        android:name="com.example.grupo_pdm.ui.movie.detailsScreen.MovieDetailsFragment"
+        android:label="Movie Details"
+        tools:layout="@layout/fragment_movie_details">
+        <argument
+            android:name="movieId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_movieDetails_to_peopleDetailFragment"
+            app:destination="@id/peopleDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryMovieFragment"
+        android:name="com.example.grupo_pdm.ui.movie.categoryMovies.CategoryMovieFragment"
+        android:label="fragment_category_movie_screen"
+        tools:layout="@layout/fragment_category_movie_screen" >
+        <action
+            android:id="@+id/action_categoryMovieFragment_to_movieDetailsFragment"
+            app:destination="@id/movieDetailsFragment" />
+        <argument
+            android:name="category_name"
+            app:argType="string" />
     </fragment>
 </navigation>

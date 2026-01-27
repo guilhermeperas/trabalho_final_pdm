@@ -1,4 +1,4 @@
-package com.example.grupo_pdm.data
+    package com.example.grupo_pdm.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
@@ -107,8 +107,10 @@ object MovieServiceClient {
             defaultRequest {
                 contentType(ContentType.Application.Json)
 
-                getCredentials()?.run {
-                    basicAuth(username, password)
+                getCredentials()?.let { (username, password) ->
+                    val authString = "$username:$password"
+                    val encodedAuthString = Base64.encodeToString(authString.toByteArray(), Base64.NO_WRAP)
+                    header("Authorization", "Basic $encodedAuthString")
                 }
 
                 url {
@@ -122,7 +124,6 @@ object MovieServiceClient {
 
 
     fun getActors(): Flow<ApiResult<List<PersonResponse>>> = flow {
-        android.util.Log.d("MovieClient", "Fetching actors...")
         try {
             val response = client.get("/people")
             if (response.status.isSuccess()) {
@@ -138,7 +139,22 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
+    fun getCategories(): Flow<ApiResult<List<CategoryResponse>>> = flow {
 
+        try {
+            val response = client.get("/genres");
+            if (response.status.isSuccess()) {
+                val categories = response.body<List<CategoryResponse>>()
+                emit(ApiResult.Success(categories))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception fetching categories", e)
+            emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+
+        }
+    }
     fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
         try {
             val response = client.get("/people/$id")
@@ -156,28 +172,38 @@ object MovieServiceClient {
         }
     }
 
+    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse>>> = flow {
+         try {
+            val response = client.get("/movies?&genre=$categoryName")
+            if (response.status.isSuccess()) {
+                val movies = response.body<List<MovieResponse>>()
+                emit(ApiResult.Success(movies))
+            } else {
+                val errorDetails = try {
+                    response.body<ProblemDetails>()
+                } catch (e: Exception) {
+                     android.util.Log.e("MovieClient", "Failed to parse error body", e)
+                    ProblemDetails(
+                        type = "error",
+                        title = "Api Error",
+                        status = response.status.value,
+                        detail = "Request failed with status ${response.status}"
+                    )
+                }
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+             android.util.Log.e("MovieClient", "Exception fetching cat movies", e)
+             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+
     suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
         val response = client.post("/users/register") {
             setBody(request)
         }
         if (response.status.isSuccess()) {
-             // The API returns PrivateUserResponse usually, but let's check Swagger.
-             // Swagger says /users/register returns PrivateUserResponse.
-             // However, for immediate login or simplifying, we might want to map it or just return success.
-             // Let's assume the user wants to login immediately after or just navigate back.
-             // Wait, the return type in signature I wrote is LoginResponse...
-             // Swagger says:
-             // /users/register -> 200 OK -> PrivateUserResponse
-             // /users/login -> 200 OK -> LoginResponse
-             // I will change the return type to PrivateUserResponse to match API.
             ApiResult.Success(LoginResponse(0, request.username, "user")) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
-            // Actually, let's look at Model.kt. We have PrivateUserResponse? No.
-            // Let's add PrivateUserResponse to Model.kt if missing or just use simple mapping.
-            // Wait, I can't check Model.kt content again easily in this turn.
-            // The user wants "logic for create account".
-            // I'll implementation a simple Void/Boolean success or return the user data.
-            // Let's stick to returning ApiResult<Boolean> for simplicity or the actual response.
-            // I'll return ApiResult<Boolean> for "success".
             ApiResult.Success(LoginResponse(0, request.username, "user")) // Placeholder, effectively just "Success"
         } else {
             ApiResult.Failure(response.body())

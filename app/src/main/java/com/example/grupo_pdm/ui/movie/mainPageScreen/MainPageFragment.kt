@@ -12,6 +12,7 @@ import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
+
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
 import kotlinx.coroutines.launch
 
@@ -21,8 +22,10 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     
     private val viewModel: MainPageViewModel by viewModels()
 
-    private val categoryAdapter = CategoryAdapter { category ->
-
+    private val categoriesAdapter = CategoryAdapter { category ->
+        findNavController().navigate(
+            MainPageDirections.actionMainPageToCategoryMovieFragment(category.name)
+        )
     }
     private val newMovieAdapter = MovieAdapter { movie ->
 
@@ -45,7 +48,7 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     }
     
     private fun setupRecyclerViews() {
-        binding.rvCategories.adapter = categoryAdapter
+        binding.rvCategories.adapter = categoriesAdapter
         binding.rvNewMovies.adapter = newMovieAdapter
         binding.rvTrendingMovies.adapter = trendingMovieAdapter
         binding.rvActors.adapter = actorAdapter
@@ -53,7 +56,7 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     
     private fun observeData() {
         viewLifecycleOwner.lifecycleScope.launch {
-             viewModel.actors.collect { result ->
+            viewModel.actors.collect { result ->
                  when (result) {
                     is ApiResult.Success -> actorAdapter.submitList(result.data)
                     is ApiResult.Failure -> Toast.makeText(requireContext(), "Failed to load actors: ${result.error.detail}", Toast.LENGTH_SHORT).show()
@@ -61,6 +64,16 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
                 }
             }
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.categories.collect { result ->
+                when (result) {
+                    is ApiResult.Success -> categoriesAdapter.submitList(result.data)
+                    is ApiResult.Failure -> Toast.makeText(requireContext(), "Failed to load categories: ${result.error.detail}", Toast.LENGTH_SHORT).show()
+                    else -> {}
+                }
+            }
+        }
+
     }
 
     override fun onDestroyView() {

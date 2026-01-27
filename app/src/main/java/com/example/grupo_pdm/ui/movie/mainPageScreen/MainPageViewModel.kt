@@ -40,7 +40,7 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
     fun loadData() {
         viewModelScope.launch {
             launch {
-                //MovieServiceClient.getCategories().collect { _categories.value = it }
+                MovieServiceClient.getCategories().collect { _categories.value = it }
             }
             launch {
                 //MovieServiceClient.getNewMovies().collect { _newMovies.value = it }

@@ -59,7 +59,7 @@ data class MovieResponse(
     val id: Int,
     val title: String,
     val synopsis: String? = null,
-    val genres: List<Int>? = null, // id genre
+    val genres: List<String>? = null, // Genre names
     val releaseDate: String? = null, // Format: "YYYY-MM-DD"
     val directorId: Int? = null,
     val cast: List<CastMemberResponse>? = null,
