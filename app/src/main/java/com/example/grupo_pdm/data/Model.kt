@@ -131,8 +131,7 @@ data class MovieResponse2(
     val favorite: Boolean = false,
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
-    val pictures: List<PictureResponse>? = null,
-    val rating: Double? = null
+    val pictures: List<PictureResponse>? = null
 )
 @Serializable
 data class DirectorShort(

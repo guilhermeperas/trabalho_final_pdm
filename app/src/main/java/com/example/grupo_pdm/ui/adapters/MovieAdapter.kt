@@ -43,35 +43,12 @@ class MovieAdapter(
             val pictureId = movie.mainPicture?.id
             if (pictureId != null) {
 
-                // “Tag” para evitar bug comum de RecyclerView:
-                // se o utilizador faz scroll rápido, a mesma ImageView é reutilizada,
-                // e uma coroutine antiga pode acabar por colocar a imagem errada.
-                // Com tagValue, só aplicamos a imagem se ainda for o mesmo item.
-                val tagValue = "${movie.id}:$pictureId"
-                binding.ivPoster.tag = tagValue
-
-                // Se não houver scope (null), não carrega imagem (fica placeholder).
-                scope?.launch {
-
-                    // 1) Chamada de rede (IO)
-                    val bytes = withContext(Dispatchers.IO) {
-                        MovieServiceClient.getMoviePictureBytes(movie.id, pictureId)
-                    }
-
-                    // 2) Se ainda for o mesmo item (tag igual) e vier bytes, decodifica
-                    if (bytes != null && binding.ivPoster.tag == tagValue) {
-
-                        // decodeByteArray pode ser pesado -> Dispatchers.Default
-                        val bmp = withContext(Dispatchers.Default) {
-                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                        }
-
-                        // 3) Confirma tag outra vez (segurança extra) antes de aplicar
-                        if (binding.ivPoster.tag == tagValue) {
-                            binding.ivPoster.setImageBitmap(bmp)
-                        }
-                    }
+                // Use ImageLoader class
+                scope?.let {
+                    val imageLoader = com.example.grupo_pdm.data.ImageLoader(it)
+                    imageLoader.loadMoviePicture(movie.id, pictureId, binding.ivPoster)
                 }
+
             }
 
 

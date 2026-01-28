@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.grupo_pdm.data.ImageLoader
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.ItemMovieResultBinding
@@ -71,6 +72,7 @@ class MovieResultAdapter(
             // 2) Se existir mainPicture, tenta buscar os bytes da imagem via API e converter para Bitmap.
             val picId = movie.mainPicture?.id
             if (picId != null) {
+                //ImageLoader(scope).loadImage(movie.id, picId)
 
                 // Lança coroutine para fazer a chamada de rede fora da thread principal.
                 scope.launch {

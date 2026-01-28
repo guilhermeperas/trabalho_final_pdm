@@ -6,17 +6,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupo_pdm.data.MovieResponse
+import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.databinding.ItemAdminManageBinding
 
 class AdminManageMoviesAdapter(
-    private val onEdit: (MovieResponse) -> Unit,
-    private val onDelete: (MovieResponse) -> Unit
-) : ListAdapter<MovieResponse, AdminManageMoviesAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<MovieResponse>() {
-        override fun areItemsTheSame(a: MovieResponse, b: MovieResponse) =
+    private val onEdit: (MovieResponse2) -> Unit,
+    private val onDelete: (MovieResponse2) -> Unit
+) : ListAdapter<MovieResponse2, AdminManageMoviesAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<MovieResponse2>() {
+        override fun areItemsTheSame(a: MovieResponse2, b: MovieResponse2) =
             a.id == b.id
 
-        override fun areContentsTheSame(a: MovieResponse, b: MovieResponse) =
+        override fun areContentsTheSame(a: MovieResponse2, b: MovieResponse2) =
             a == b
     }
 ) {
@@ -25,7 +26,7 @@ class AdminManageMoviesAdapter(
         private val binding: ItemAdminManageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(movie: MovieResponse) {
+        fun bind(movie: MovieResponse2) {
             binding.txtItemName.text = movie.title
 
             binding.btnEdit.setOnClickListener {

@@ -47,6 +47,9 @@
         <action
             android:id="@+id/action_mainPage_to_movieDetailFragment"
             app:destination="@id/movieDetailFragment" />
+        <action
+            android:id="@+id/action_mainPage_to_adminHomeFragment"
+            app:destination="@id/adminHomeFragment" />
     </fragment>
     <fragment
         android:id="@+id/peopleDetailFragment"
@@ -56,6 +59,9 @@
         <argument
             android:name="personId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_peopleDetailFragment_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/categoryMovieFragment"
@@ -115,5 +121,31 @@
         android:name="com.example.grupo_pdm.ui.user.userProfileFragment.UserPerfilFragment"
         android:label="userProfile">
     </fragment>
+    <fragment
+        android:id="@+id/adminHomeFragment"
+        android:name="com.example.grupo_pdm.ui.admin.AdminHomeFragment"
+        android:label="AdminHomeFragment" >
+        <action
+            android:id="@+id/action_adminHomeFragment_to_adminManageMoviesFragment"
+            app:destination="@id/adminManageMoviesFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_adminManageActorsFragment"
+            app:destination="@id/adminManageActorsFragment" />
+        <action
+            android:id="@+id/action_adminHomeFragment_to_adminManageUsersFragment"
+            app:destination="@id/adminManageUsersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminManageActorsFragment"
+        android:name="com.example.grupo_pdm.ui.admin.manage.actors.AdminManageActorsFragment"
+        android:label="AdminManageActorsFragment" />
+    <fragment
+        android:id="@+id/adminManageMoviesFragment"
+        android:name="com.example.grupo_pdm.ui.admin.manage.movie.AdminManageMoviesFragment"
+        android:label="AdminManageMoviesFragment" />
+    <fragment
+        android:id="@+id/adminManageUsersFragment"
+        android:name="com.example.grupo_pdm.ui.admin.manage.users.AdminManageUsersFragment"
+        android:label="AdminManageUsersFragment" />
 
 </navigation>
