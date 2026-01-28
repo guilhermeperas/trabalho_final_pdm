@@ -32,6 +32,7 @@
     <string name="title_new">New</string>
     <string name="title_trending">Trending</string>
     <string name="title_actors">Actors</string>
+    <string name="empty_category_message">Nothing to see here...</string>
 
     <string name="msg_no_results">No results found.</string>
     <string name="msg_error_loading">Error loading results.</string>

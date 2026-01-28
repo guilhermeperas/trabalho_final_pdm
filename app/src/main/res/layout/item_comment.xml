@@ -1,73 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  item_comment.xml
-  Objetivo: Card de um comentário para a lista de comentários (RecyclerView vertical)
-  no ecrã de detalhe do filme.
-
-  Estrutura:
-  - MaterialCardView: cartão com cantos arredondados e padding/sombra.
-  - Dentro: layout vertical com:
-      1) nome do utilizador
-      2) data do comentário
-      3) texto do comentário
--->
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     app:cardCornerRadius="12dp"
     app:cardUseCompatPadding="true">
 
-    <!--
-      LinearLayout vertical para empilhar os textos (User -> Date -> Comment).
-      padding="10dp" dá espaço interno para ficar mais legível.
-    -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:padding="12dp">
 
-        <!--
-          Nome do utilizador que escreveu o comentário.
-          bold para destacar quem escreveu.
-          No futuro: este texto vem de dados reais (ex.: username).
-        -->
+        <!-- Username -->
         <TextView
             android:id="@+id/tvUser"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="User 1"/>
+            android:textSize="14sp"
+            tools:text="User123"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ratingContainer"/>
 
-        <!--
-          Data (ou hora) do comentário.
-          alpha + textSize menor => fica como informação secundária.
-          No futuro: vem do backend/BD (ex.: "há 2 dias" ou "2026-01-16").
-        -->
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:alpha="0.65"
-            android:textSize="12sp"
-            android:text="2026-01-16"/>
-
-        <!--
-          Texto do comentário.
-          Sem maxLines => pode crescer para várias linhas (quebra linha automaticamente).
-          marginTop para separar da data.
-        -->
+        <!-- Comment text -->
         <TextView
             android:id="@+id/tvComment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Comentário aqui... pode ser maior e quebrar linha."/>
-    </LinearLayout>
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:alpha="0.9"
+            tools:text="This movie was amazing! Loved every moment of it."
+            app:layout_constraintTop_toBottomOf="@id/tvUser"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ratingContainer"/>
+
+        <!-- Date -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:alpha="0.6"
+            android:textSize="11sp"
+            tools:text="2026-01-16"
+            app:layout_constraintTop_toBottomOf="@id/tvComment"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ratingContainer"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <!-- Rating on the right -->
+        <LinearLayout
+            android:id="@+id/ratingContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="8.5"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/5"
+                android:textSize="10sp"
+                android:alpha="0.6"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
+

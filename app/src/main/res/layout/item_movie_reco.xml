@@ -2,7 +2,7 @@
 
 <!--
   item_movie_reco.xml
-  Objetivo: “Card” de um filme para listas horizontais (Recomendações / Semelhantes).
+  Objetivo: "Card" de um filme para listas horizontais (Recomendações / Semelhantes).
 
   Onde é usado:
   - RecyclerView horizontal (ex.: rvRecommendations no SearchPage)
@@ -24,7 +24,7 @@
 
     <!--
       Conteúdo vertical:
-      - poster
+      - poster with heart overlay
       - título
     -->
     <LinearLayout
@@ -33,25 +33,31 @@
         android:padding="6dp"
         android:orientation="vertical">
 
-        <!--
-          Poster do filme.
-          - Altura 120dp: mantém a secção compacta.
-          - centerCrop: imagem preenche sem distorcer (corta se necessário).
-          No futuro: imagem real carregada por Glide/Picasso/Coil.
-        -->
-        <ImageView
-            android:id="@+id/ivPoster"
+        <!-- Poster with heart overlay -->
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="Poster"
-            android:src="@android:drawable/ic_menu_report_image" />
+            android:layout_height="120dp">
 
-        <!--
-          Título do filme (baixo do poster).
-          - textSize=12sp para caber no card pequeno.
-          - maxLines=1 + ellipsize=end para cortar títulos longos com "...".
-        -->
+            <ImageView
+                android:id="@+id/ivPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Poster"
+                android:src="@android:drawable/ic_menu_report_image" />
+
+            <!-- Favorite heart icon (top-right corner) -->
+            <ImageView
+                android:id="@+id/ivFavorite"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_heart_outline_24"
+                android:visibility="visible"
+                android:contentDescription="Favorite"/>
+        </FrameLayout>
+
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"

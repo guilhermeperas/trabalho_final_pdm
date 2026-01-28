@@ -58,11 +58,10 @@ data class CreateGenreRequest(
 data class MovieResponse(
     val id: Int,
     val title: String,
-    val genres: List<String> = emptyList(),
-    val director: DirectorShort? = null,
-    val mainPicture: PictureShort? = null,
+    val synopsis: String? = null,
+    val genres: List<Int>? = null, // id genre
     val releaseDate: String? = null, // Format: "YYYY-MM-DD"
-    val favorite: Boolean = false,
+    val directorId: Int? = null,
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null,
