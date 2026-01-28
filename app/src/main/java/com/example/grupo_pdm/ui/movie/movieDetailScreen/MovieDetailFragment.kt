@@ -16,6 +16,10 @@ import com.example.grupo_pdm.ui.adapters.CastAdapter
 import com.example.grupo_pdm.ui.adapters.GenreAdapter
 import com.example.grupo_pdm.ui.adapters.RatingAdapter
 import kotlinx.coroutines.launch
+import com.example.grupo_pdm.ui.components.TopBarView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 
 class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     private var _binding: FragmentMovieDetailBinding? = null
@@ -100,6 +104,17 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                     is ApiResult.Loading -> { /* show loading */ }
                     is ApiResult.Success -> {
                         val movie = result.data
+
+                        // Movie Poster
+                        val pictureId = movie.mainPicture?.id
+                        if (pictureId != null) {
+                            binding.ivMoviePoster.load("http://10.0.2.2:8080/movies/${movie.id}/pictures/$pictureId") {
+                                crossfade(true)
+                                placeholder(android.R.drawable.ic_menu_gallery)
+                            }
+                        } else {
+                            binding.ivMoviePoster.setImageResource(android.R.drawable.ic_menu_gallery)
+                        }
 
                         // Title
                         binding.tvTitle.text = movie.title

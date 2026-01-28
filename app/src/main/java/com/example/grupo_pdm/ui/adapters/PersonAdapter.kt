@@ -21,7 +21,7 @@ class PersonAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(person: PersonResponse) {
-            binding.tvActorName.text = "BODA"
+            binding.tvActorName.text = person.name
 
             binding.root.setOnClickListener {
                 onItemClick(person)
