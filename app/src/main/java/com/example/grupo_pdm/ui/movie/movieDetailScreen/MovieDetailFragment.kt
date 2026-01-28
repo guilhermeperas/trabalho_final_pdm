@@ -127,12 +127,15 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                         val age = movie.minimumAge?.let { "$it+" } ?: "All ages"
                         binding.tvMeta.text = "$date • Age: $age"
 
-                        // Rating display disabled for now
-                        binding.ratingBar.rating = 0f
-                        binding.tvRating.text = "N/A"
+
 
                         // Genres
                         movie.genres?.let { genreAdapter.submitList(it) }
+
+                        // Rating from Movie Object directly
+                        val ratingVal = movie.rating?.average ?: 0.0
+                        binding.ratingBar.rating = ratingVal.toFloat()
+                        binding.tvRating.text = if (ratingVal > 0.0) String.format("%.1f", ratingVal) else "N/A"
 
                         // Director
                         movie.director?.let { director ->
@@ -166,12 +169,34 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         // Observe ratings/comments
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.ratings.collect { result ->
+                android.util.Log.d("MovieDetailDebug", "Ratings flow emission: $result")
                 when (result) {
                     is ApiResult.Success -> {
-                        ratingAdapter.submitList(result.data)
+                        val ratings = result.data
+                        android.util.Log.d("MovieDetailDebug", "Ratings loaded: ${ratings.size}")
+                        // Toast.makeText(requireContext(), "Ratings: ${ratings.size}", Toast.LENGTH_SHORT).show()
+                        
+                        if (ratings.isNotEmpty()) {
+                            val avg = ratings.map { it.score }.average()
+                            android.util.Log.d("MovieDetailDebug", "Calculated Average: $avg")
+                            
+                            binding.ratingBar.rating = avg.toFloat()
+                            binding.tvRating.text = String.format("%.1f", avg)
+                        } else {
+                            android.util.Log.d("MovieDetailDebug", "Ratings empty, setting 0")
+                            binding.ratingBar.rating = 0f
+                            binding.tvRating.text = "N/A"
+                        }
+                        // Hide reviews list as requested
+                        binding.rvComments.visibility = View.GONE
+                        binding.btnViewAllReviews.visibility = View.GONE
                     }
                     is ApiResult.Failure -> {
-                        android.util.Log.e("MovieDetailFragment", "Error loading ratings: ${result.error.detail}")
+                        android.util.Log.e("MovieDetailDebug", "Error loading ratings: ${result.error.detail}")
+                        // Toast.makeText(requireContext(), "Ratings Err: ${result.error.detail}", Toast.LENGTH_SHORT).show()
+                    }
+                    is ApiResult.Loading -> {
+                        android.util.Log.d("MovieDetailDebug", "Ratings Loading...")
                     }
                     else -> {}
                 }

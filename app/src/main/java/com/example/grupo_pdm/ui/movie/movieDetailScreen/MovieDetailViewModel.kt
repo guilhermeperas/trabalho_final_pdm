@@ -36,6 +36,15 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
 
     fun loadMovie(movieId: Int) {
         currentMovieId = movieId
+        
+        // Check local rating state
+        val userId = prefs.getInt("userId", -1)
+        val hasRatedLocally = prefs.getBoolean("rated_${userId}_${movieId}", false)
+        if (hasRatedLocally) {
+            _hasReviewed.value = true
+        } else {
+            _hasReviewed.value = false
+        }
 
         viewModelScope.launch {
             _movie.value = ApiResult.Loading(0)
@@ -65,18 +74,7 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun loadRatings(movieId: Int) {
-        viewModelScope.launch {
-            MovieServiceClient.getRatings(movieId).collect { result ->
-                _ratings.value = result
-                if (result is ApiResult.Success) {
-                    val userId = prefs.getInt("userId", -1)
-                    val hasReviewedFromApi = result.data.any { it.author == userId }
-                    if (hasReviewedFromApi) {
-                        _hasReviewed.value = true
-                    }
-                }
-            }
-        }
+        // Disabled due to API error 500
     }
 
     fun submitRating(score: Int, comment: String?) {
@@ -89,8 +87,12 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
             val result = MovieServiceClient.submitRating(currentMovieId, request)
             _submitResult.value = result
             if (result is ApiResult.Success) {
+                // Save local state
+                val userId = prefs.getInt("userId", -1)
+                prefs.edit().putBoolean("rated_${userId}_${currentMovieId}", true).apply()
+                
                 _hasReviewed.value = true
-                loadRatings(currentMovieId)
+                loadMovie(currentMovieId) // Refresh to get new average
             }
         }
     }

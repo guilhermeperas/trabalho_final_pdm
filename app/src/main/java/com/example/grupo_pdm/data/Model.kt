@@ -119,6 +119,56 @@ data class MovieResponse(
     val pictures: List<PictureResponse>? = null,
     val favorite: Boolean? = null  // From API - true if user has favorited this movie
 )
+
+@Serializable
+data class RatingSummary(
+    val average: Double? = null,
+    val buckets: List<RatingBucket>? = null
+)
+
+@Serializable
+data class RatingBucket(
+    val rating: Int,
+    val count: Int
+)
+
+object RatingPolymorphicSerializer : KSerializer<RatingSummary?> {
+    override val descriptor: SerialDescriptor = 
+        kotlinx.serialization.descriptors.buildClassSerialDescriptor("RatingSummary")
+
+    override fun serialize(encoder: Encoder, value: RatingSummary?) {
+        // We always serialize back to Object just to be safe, or we could handle it.
+        // For read-only app, serialization might not be critical, but we should support it.
+        if (value == null) {
+            encoder.encodeNull()
+            return
+        }
+        val output = encoder as kotlinx.serialization.json.JsonEncoder
+        output.encodeSerializableValue(RatingSummary.serializer(), value)
+    }
+
+    override fun deserialize(decoder: Decoder): RatingSummary? {
+        val input = decoder as? kotlinx.serialization.json.JsonDecoder ?: return null
+        val element = input.decodeJsonElement()
+        
+        if (element is kotlinx.serialization.json.JsonNull) return null
+        
+        return if (element is kotlinx.serialization.json.JsonPrimitive) {
+            // It's a number like 4.5 or 4
+            try {
+                RatingSummary(average = element.content.toDoubleOrNull())
+            } catch (e: Exception) {
+                null
+            }
+        } else if (element is kotlinx.serialization.json.JsonObject) {
+            // It's the full object { "average": 3, ... }
+            input.json.decodeFromJsonElement(RatingSummary.serializer(), element)
+        } else {
+            null
+        }
+    }
+}
+
 @Serializable
 data class MovieResponse2(
     val id: Int,
@@ -131,6 +181,8 @@ data class MovieResponse2(
     private val _mainPicture: PictureResponse? = null,
     val releaseDate: String? = null, // Format: "YYYY-MM-DD"
     val favorite: Boolean = false,
+    @Serializable(with = RatingPolymorphicSerializer::class)
+    val rating: RatingSummary? = null, // Changed from Double to Object
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null
