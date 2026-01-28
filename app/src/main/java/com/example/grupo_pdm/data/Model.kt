@@ -3,6 +3,7 @@
 package com.example.grupo_pdm.data
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseContextualSerialization
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -126,13 +127,18 @@ data class MovieResponse2(
     @Serializable(with = GenreListSerializer::class)
     val genres: List<GenreResponse>? = null,
     val director: DirectorShort? = null,
-    val mainPicture: PictureShort? = null,
+    @SerialName("mainPicture")
+    private val _mainPicture: PictureResponse? = null,
     val releaseDate: String? = null, // Format: "YYYY-MM-DD"
     val favorite: Boolean = false,
     val cast: List<CastMemberResponse>? = null,
     val minimumAge: Int? = null,
     val pictures: List<PictureResponse>? = null
-)
+) {
+    val mainPicture: PictureResponse?
+        get() = _mainPicture ?: pictures?.firstOrNull { it.mainPicture == true } ?: pictures?.firstOrNull()
+}
+
 @Serializable
 data class DirectorShort(
     val personId: Int,
@@ -184,7 +190,25 @@ data class PersonDetailResponse(
     val id: Int,
     val name: String,
     val dateOfBirth: String? = null, // Format: "YYYY-MM-DD"
-    val pictures: List<PictureResponse>? = null
+    val pictures: List<PictureResponse>? = null,
+    val directedMovies: List<DirectedMovie>? = null,
+    val roles: List<PersonRole>? = null
+)
+
+@Serializable
+data class DirectedMovie(
+    val id: Int,
+    val title: String,
+    val releaseDate: String? = null,
+    val picture: PictureResponse? = null
+)
+
+@Serializable
+data class PersonRole(
+    val movieId: Int,
+    val title: String,
+    val releaseDate: String? = null,
+    val character: String
 )
 
 @Serializable

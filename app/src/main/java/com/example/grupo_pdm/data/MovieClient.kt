@@ -181,11 +181,11 @@ object MovieServiceClient {
         }
     }
     
-    fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
+    fun getPerson(id: Int): Flow<ApiResult<PersonDetailResponse>> = flow {
         try {
             val response = client.get("/people/$id")
             if (response.status.isSuccess()) {
-                val person = response.body<PersonResponse>()
+                val person = response.body<PersonDetailResponse>()
                 android.util.Log.d("MovieClient", "Person fetched: ${person.name}")
                 emit(ApiResult.Success(person))
             } else {
@@ -518,12 +518,11 @@ object MovieServiceClient {
             )
         }
 
-
-    suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
-        android.util.Log.d("MovieClient", "Attempting login for user: $username")
-        val response = client.get("/users/login") {
-            basicAuth(username, password)
-        }
+        suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
+            android.util.Log.d("MovieClient", "Attempting login for user: $username")
+            val response = client.get("/users/login") {
+                basicAuth(username, password)
+            }
             if (response.status.isSuccess()) {
                 val loginResult: LoginResponse = response.body()
                 android.util.Log.d("MovieClient", "Login success: ${loginResult.id}")

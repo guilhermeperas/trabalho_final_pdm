@@ -11,10 +11,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
+import com.example.grupo_pdm.data.PersonDetailResponse
+
 class PeopleDetailViewModel(app: Application) : AndroidViewModel(app) {
 
-    private val _person = MutableStateFlow<ApiResult<PersonResponse>?>(null)
-    val person: StateFlow<ApiResult<PersonResponse>?> = _person.asStateFlow()
+    private val _person = MutableStateFlow<ApiResult<PersonDetailResponse>?>(null)
+    val person: StateFlow<ApiResult<PersonDetailResponse>?> = _person.asStateFlow()
 
     fun loadPerson(id: Int) {
         viewModelScope.launch {
