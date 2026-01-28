@@ -49,7 +49,7 @@ class SearchPage : Fragment(R.layout.fragment_search_page) {
         }
 
         // RecyclerView das Recomendacoes (horizontal)
-        val recoAdapter = MovieAdapter(viewLifecycleOwner.lifecycleScope)
+        val recoAdapter = MovieAdapter()
         binding.rvRecommendations.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvRecommendations.adapter = recoAdapter

@@ -19,7 +19,6 @@ class CastAdapter(
         fun bind(cast: CastMemberResponse) {
             binding.tvCastName.text = cast.name ?: "Unknown"
             binding.tvCastCharacter.text = "as ${cast.character}"
-
             binding.root.setOnClickListener {
                 onItemClick(cast)
             }

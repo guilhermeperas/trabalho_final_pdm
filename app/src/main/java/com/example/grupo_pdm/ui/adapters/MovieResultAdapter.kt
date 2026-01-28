@@ -4,7 +4,6 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.grupo_pdm.data.ImageLoader
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.ItemMovieResultBinding
@@ -14,12 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MovieResultAdapter(
-    // scope vindo do Fragment (viewLifecycleOwner.lifecycleScope).
-    // Usamos este scope para lançar coroutines e carregar imagens de forma assíncrona,
-    // sem bloquear a UI (main thread)
     private val scope: CoroutineScope,
-    // Callback chamado quando o utilizador clica num filme da lista.
-    // O Fragment decide o que fazer (ex.: navegar para detalhes).
     private val onMovieClick: (MovieResponse2) -> Unit = {
 
     }
@@ -72,15 +66,8 @@ class MovieResultAdapter(
             // 2) Se existir mainPicture, tenta buscar os bytes da imagem via API e converter para Bitmap.
             val picId = movie.mainPicture?.id
             if (picId != null) {
-                //ImageLoader(scope).loadImage(movie.id, picId)
-
-                // Lança coroutine para fazer a chamada de rede fora da thread principal.
                 scope.launch {
-
-                    // Chamada ao client (Ktor) para obter os bytes da imagem.
                     val bytes = MovieServiceClient.getMoviePictureBytes(movie.id, picId)
-
-                    // Se vier bytes, converte para bitmap e coloca na ImageView.
                     if (bytes != null) {
                         // decodeByteArray pode ser pesado, por isso usamos Dispatchers.Default
                         val bmp = withContext(Dispatchers.Default) {

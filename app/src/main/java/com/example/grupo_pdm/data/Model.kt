@@ -177,6 +177,13 @@ data class PersonResponse(
     val id: Int,
     val name: String,
     val dateOfBirth: String? = null, // Format: "YYYY-MM-DD"
+    val picture: PictureResponse? = null
+)
+@Serializable
+data class PersonDetailResponse(
+    val id: Int,
+    val name: String,
+    val dateOfBirth: String? = null, // Format: "YYYY-MM-DD"
     val pictures: List<PictureResponse>? = null
 )
 
@@ -202,9 +209,7 @@ data class PictureResponse(
     val filename: String? = null,
     val contentType: String? = null,
     val description: String? = null,
-    val data: String? = null
 )
-
 @Serializable
 data class CreatePictureRequest(
     val filename: String,

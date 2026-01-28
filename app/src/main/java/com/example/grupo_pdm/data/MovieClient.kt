@@ -577,6 +577,60 @@ object MovieServiceClient {
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
+    suspend fun getMoviePicture(movieId: Int, pictureId: Int): ApiResult<ByteArray> {
+        return try {
+            val response = client.get("/movies/$movieId/pictures/$pictureId") {
+                getCredentials()?.run {
+                    basicAuth(username, password)
+                }
+            }
+            if (response.status.isSuccess()) {
+                ApiResult.Success(response.body())
+            } else {
+                try {
+                    val problem = response.body<ProblemDetails>()
+                    ApiResult.Failure(problem)
+                } catch (e: Exception) {
+                    ApiResult.Failure(ProblemDetails("Error", "Unknown Error", response.status.value, "Could not parse error info"))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ApiResult.Failure(ProblemDetails("Exception", "Error fetching picture", 500, e.message ?: ""))
+        }
+    }
+
+    suspend fun getPersonPicture(id: Int, picId: Any) : ApiResult<ByteArray>{
+        android.util.Log.d("MovieClient", "getPersonPicture called with personId: $id, picId: $picId")
+        return try {
+            val url = "people/$id/picture/$picId"
+            android.util.Log.d("MovieClient", "Requesting URL: $url")
+            val response = client.get(url) {
+                getCredentials()?.run {
+                    basicAuth(username, password)
+                }
+            }
+            android.util.Log.d("MovieClient", "Response Status: ${response.status}")
+            if (response.status.isSuccess()) {
+                val bytes = response.body<ByteArray>()
+                android.util.Log.d("MovieClient", "Successfully fetched ${bytes.size} bytes")
+                ApiResult.Success(bytes)
+            } else {
+                try {
+                    val problem = response.body<ProblemDetails>()
+                    android.util.Log.e("MovieClient", "Failed to get picture: $problem")
+                    ApiResult.Failure(problem)
+                } catch (e: Exception) {
+                    android.util.Log.e("MovieClient", "Failed to parse error body", e)
+                    ApiResult.Failure(ProblemDetails("Error", "Unknown Error", response.status.value, "Could not parse error info"))
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+             android.util.Log.e("MovieClient", "Exception in getPersonPicture", e)
+            ApiResult.Failure(ProblemDetails("Exception", "Error fetching picture", 500, e.message ?: ""))
+        }
+    }
 
     data class Credentials(val username: String, val password: String)
     }

@@ -9,13 +9,15 @@ import androidx.navigation.fragment.findNavController
 import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
-import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
 import com.example.grupo_pdm.ui.components.TopBarView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 import kotlinx.coroutines.launch
 
 class MainPage : Fragment(R.layout.fragment_main_page) {
@@ -144,7 +146,15 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
             viewModel.randomMovie.collect { movie ->
                 if (movie != null) {
                     currentRandomMovie = movie
-                    // TODO: Load movie image if needed
+                    val pictureId = movie.mainPicture?.id
+                    if (pictureId != null) {
+                        binding.ivRandomMovie.load("http://10.0.2.2:8080/movies/${movie.id}/pictures/$pictureId") {
+                            crossfade(true)
+                            placeholder(android.R.drawable.ic_menu_gallery)
+                        }
+                    } else {
+                        binding.ivRandomMovie.setImageResource(android.R.drawable.ic_menu_gallery)
+                    }
                 }
             }
         }

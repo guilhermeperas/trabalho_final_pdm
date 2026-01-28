@@ -4,22 +4,22 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 import com.example.grupo_pdm.R
+import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 /**
  * Adapter for displaying movies in a horizontal RecyclerView.
  * Used for both "New" and "Trending" sections on the main page.
  */
 class MovieAdapter(
-    private val scope: CoroutineScope? = null,
     private val onMovieClick: (MovieResponse2) -> Unit = {},
     private val onFavoriteClick: (MovieResponse2) -> Unit = {}
 ) : BaseAdapter<MovieResponse2, MovieAdapter.MovieViewHolder>(onItemClick = onMovieClick) {
@@ -39,16 +39,14 @@ class MovieAdapter(
 
             // --- Poster: começa sempre com placeholder ---
             // Importante para evitar que a RecyclerView mostre imagens “antigas” quando recicla Views.
-            binding.ivPoster.setImageResource(android.R.drawable.ic_menu_report_image)
             val pictureId = movie.mainPicture?.id
             if (pictureId != null) {
-
-                // Use ImageLoader class
-                scope?.let {
-                    val imageLoader = com.example.grupo_pdm.data.ImageLoader(it)
-                    imageLoader.loadMoviePicture(movie.id, pictureId, binding.ivPoster)
+                 binding.ivPoster.load("http://10.0.2.2:8080/movies/${movie.id}/pictures/$pictureId") {
+                    crossfade(true)
+                    placeholder(android.R.drawable.ic_menu_report_image)
                 }
-
+            } else {
+                binding.ivPoster.setImageResource(android.R.drawable.ic_menu_report_image)
             }
 
 
