@@ -142,6 +142,16 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                                     MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(director.personId)
                                 )
                             }
+                            
+                            val dirPicId = director.picture?.id
+                            if (dirPicId != null) {
+                                binding.ivDirectorPhoto.load("http://10.0.2.2:8080/people/${director.personId}/picture/$dirPicId") {
+                                    crossfade(true)
+                                    placeholder(R.drawable.ic_user_24)
+                                }
+                            } else {
+                                binding.ivDirectorPhoto.setImageResource(R.drawable.ic_user_24)
+                            }
                         }
 
                         movie.cast?.let { castAdapter.submitList(it) }
