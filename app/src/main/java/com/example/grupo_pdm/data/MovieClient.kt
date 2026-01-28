@@ -1,6 +1,5 @@
     package com.example.grupo_pdm.data
 
-import android.graphics.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.call.body
 import android.util.Base64
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -21,7 +21,6 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
@@ -196,7 +195,36 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
-    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse2>> = flow {
+
+    fun createPerson(
+        request: CreatePersonRequest
+    ): Flow<ApiResult<PersonResponse>> = flow {
+        try {
+            val response = client.post("/people") {
+                setBody(request)
+            }
+
+            if (response.status.isSuccess()) {
+                val person = response.body<PersonResponse>()
+                emit(ApiResult.Success(person))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
+    }
+    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse>> = flow {
         try {
             val response = client.get("/movies/$movie_id")
             if (response.status.isSuccess()) {
@@ -257,6 +285,34 @@ object MovieServiceClient {
         } catch (e: Exception) {
             android.util.Log.e("MovieClient", "Exception fetching ratings for movie ", e)
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+    fun createMovie(
+        request: CreateMovieRequest
+    ): Flow<ApiResult<MovieResponse>> = flow {
+        try {
+            val response = client.post("/movies") {
+                setBody(request)
+            }
+
+            if (response.status.isSuccess()) {
+                val movie = response.body<MovieResponse>()
+                emit(ApiResult.Success(movie))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        type = "error",
+                        title = "Network Error",
+                        status = 500,
+                        detail = e.message ?: "Unknown error"
+                    )
+                )
+            )
         }
     }
 
@@ -343,177 +399,90 @@ object MovieServiceClient {
         android.util.Log.e("MovieClient", "Exception marking as favorite $movieId", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
     }
-    suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
-        val response = client.post("/users/register") {
-            setBody(request)
-        }
-        if (response.status.isSuccess()) {
-            ApiResult.Success(LoginResponse(0, request.username, "user")) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
-            ApiResult.Success(LoginResponse(0, request.username, "user")) // Placeholder, effectively just "Success"
-        } else {
-            ApiResult.Failure(response.body())
-        }
-
-    } catch (e: Exception) {
-        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
-    }
-
-    suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
-        android.util.Log.d("MovieClient", "Attempting login for user: $username")
-        val response = client.get("/users/login") {
-            basicAuth(username, password)
-        }
-        if (response.status.isSuccess()) {
-            val loginResult: LoginResponse = response.body()
-            android.util.Log.d("MovieClient", "Login success: ${loginResult.id}")
-            setCredentials(username, password)
-            ApiResult.Success(loginResult)
-        } else {
-            android.util.Log.e("MovieClient", "Login failed: ${response.status}")
-            ApiResult.Failure(response.body())
-        }
-    } catch (e: Exception) {
-        android.util.Log.e("MovieClient", "Exception during login", e)
-        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
-    }
-    /**
-     * Pesquisa filmes por TÍTULO usando o endpoint GET /movies com query params.
-     *
-     * Retorna um Flow<ApiResult<List<MovieResponse>>> porque:
-     * - Flow: permite emitir vários estados ao longo do tempo (Loading -> Success/Failure)
-     * - ApiResult: padroniza estados da chamada (Loading/Success/Failure)
-     */
-    fun getMoviesByTitle(title: String): Flow<ApiResult<List<MovieResponse2>>> = flow {
-
-        // 1) Informa a UI que a pesquisa começou (para mostrar ProgressBar, etc.)
-        emit(ApiResult.Loading(0))
-
+    fun getUsers(): Flow<ApiResult<List<LoginResponse>>> = flow {
         try {
-            // 2) Faz o GET /movies com parâmetros de pesquisa (query string)
-            val response = client.get("/movies") {
+            val response = client.get("/users")
 
-                // Filtra por title (partial match conforme swagger)
-                parameter("title", title)
-
-                // Filtros de rating (0-5)
-                parameter("fromRating", 0)
-                parameter("toRating", 5)
-
-                // Se true, só devolve favoritos do utilizador autenticado
-                parameter("favoritesOnly", false)
-
-                // Ordenação: pode ser "releaseDate", "rating" ou "title"
-                parameter("sortBy", "releaseDate")
-
-                // Direção: "asc" (crescente) ou "desc" (decrescente)
-                parameter("sortOrder", "desc")
-            }
-
-            // 3) Interpreta a resposta
             if (response.status.isSuccess()) {
-                // Sucesso: converte o JSON para List<MovieResponse> e emite Success
-                val movies = response.body<List<MovieResponse2>>()
-                emit(ApiResult.Success(movies))
-            } else {
-                // Erro HTTP: tenta ler ProblemDetails (ou equivalente) e emite Failure
-                emit(ApiResult.Failure(response.body()))
-            }
-
-        } catch (e: Exception) {
-            // 4) Erro de rede/parse/etc.: emite Failure com um ProblemDetails “genérico”
-            emit(
-                ApiResult.Failure(
-                    ProblemDetails(
-                        type = "error",
-                        title = "Network Error",
-                        status = 500,
-                        detail = e.message ?: "Unknown error"
-                    )
-                )
-            )
-        }
-    }
-
-    /**
-     * Vai buscar a IMAGEM (bytes) de um filme.
-     * Endpoint: GET /movies/{id}/pictures/{pictureId}
-     *
-     * Porquê "suspend":
-     * - É uma chamada única, não precisamos de Flow aqui
-     * - Pode ser chamada dentro de coroutine (ex: no adapter)
-     *
-     * Retorna ByteArray?:
-     * - ByteArray com a imagem quando dá sucesso
-     * - null quando falha (para manter simples no adapter)
-     */
-    suspend fun getMoviePictureBytes(movieId: Int, pictureId: Int): ByteArray? {
-        return try {
-            // Faz o GET direto ao endpoint da imagem
-            val response = client.get("/movies/$movieId/pictures/$pictureId")
-
-            // Se for 2xx, devolve os bytes do corpo; senão devolve null
-            if (response.status.isSuccess()) response.bodyAsBytes() else null
-
-        } catch (e: Exception) {
-            // Qualquer exceção (rede, timeout, etc.) -> null
-            null
-        }
-    }
-
-    /**
-     * Recomendações por GÉNERO.
-     * Usa GET /movies com query param "genre", pedindo "count" itens.
-     *
-     * Observação:
-     * - Aqui você está a ordenar por "rating desc" para recomendar “os melhores”
-     * - Mantém filtros básicos (favoritesOnly=false, rating 0..5)
-     */
-    fun getMoviesByGenre(genre: String, count: Int = 10): Flow<ApiResult<List<MovieResponse2>>> = flow {
-
-        // 1) Estado Loading
-        emit(ApiResult.Loading(0))
-
-        try {
-            // 2) GET /movies filtrando por género + count (limite)
-            val response = client.get("/movies") {
-                parameter("genre", genre)
-
-                // Quantos itens devolver (paginação simples)
-                parameter("count", count)
-
-                // Ordena pelas melhores notas primeiro
-                parameter("sortBy", "rating")
-                parameter("sortOrder", "desc")
-
-                // Filtros gerais
-                parameter("favoritesOnly", false)
-                parameter("fromRating", 0)
-                parameter("toRating", 5)
-            }
-
-            // 3) Sucesso/erro
-            if (response.status.isSuccess()) {
-                emit(ApiResult.Success(response.body()))
+                val users = response.body<List<LoginResponse>>()
+                emit(ApiResult.Success(users))
             } else {
                 emit(ApiResult.Failure(response.body()))
             }
 
         } catch (e: Exception) {
-            // 4) Exceção -> Failure genérico
             emit(
                 ApiResult.Failure(
                     ProblemDetails(
-                        type = "error",
-                        title = "Network Error",
-                        status = 500,
-                        detail = e.message ?: "Unknown error"
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
                     )
                 )
             )
         }
     }
+        suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
+            val response = client.post("/users/register") {
+                setBody(request)
+            }
+            if (response.status.isSuccess()) {
+                ApiResult.Success(
+                    LoginResponse(
+                        0,
+                        request.username,
+                        "user"
+                    )
+                ) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
+                ApiResult.Success(
+                    LoginResponse(
+                        0,
+                        request.username,
+                        "user"
+                    )
+                ) // Placeholder, effectively just "Success"
+            } else {
+                ApiResult.Failure(response.body())
+            }
+
+        } catch (e: Exception) {
+            ApiResult.Failure(
+                ProblemDetails(
+                    "error",
+                    "Network Error",
+                    500,
+                    e.message ?: "Unknown error"
+                )
+            )
+        }
+
+        suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
+            android.util.Log.d("MovieClient", "Attempting login for user: $username")
+            val response = client.get("/users/login") {
+                basicAuth(username, password)
+            }
+            if (response.status.isSuccess()) {
+                val loginResult: LoginResponse = response.body()
+                android.util.Log.d("MovieClient", "Login success: ${loginResult.id}")
+                setCredentials(username, password)
+                ApiResult.Success(loginResult)
+            } else {
+                android.util.Log.e("MovieClient", "Login failed: ${response.status}")
+                ApiResult.Failure(response.body())
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception during login", e)
+            ApiResult.Failure(
+                ProblemDetails(
+                    "error",
+                    "Network Error",
+                    500,
+                    e.message ?: "Unknown error"
+                )
+            )
+        }
 
 
-
-    data class Credentials(val username: String, val password: String)
-}
+        data class Credentials(val username: String, val password: String)
+    }

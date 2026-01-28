@@ -4,8 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.data.CreatePersonRequest
 import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.data.PersonResponse
+import com.example.grupo_pdm.data.UpdatePersonRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,17 +32,13 @@ class AdminManageActorsViewModel(app: Application)
         }
     }
 
-    // --- CRUD (API) ---
-
-    fun createActor(name: String, photo: String) {
-        // TODO POST /people
-    }
-
-    fun updateActor(id: Int, name: String, photo: String) {
-        // TODO PUT /people/{id}
-    }
-
-    fun deleteActor(id: Int) {
-        // TODO DELETE /people/{id}
+    fun createActor(name: String) {
+        viewModelScope.launch {
+            MovieServiceClient
+                .createPerson(CreatePersonRequest(name))
+                .collect {
+                    loadActors()
+                }
+        }
     }
 }

@@ -5,16 +5,19 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.grupo_pdm.data.PersonResponse
+import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.databinding.ItemAdminManageBinding
 
-class AdminManageActorsAdapter(
-    private val onEdit: (PersonResponse) -> Unit,
-    private val onDelete: (PersonResponse) -> Unit
-) : ListAdapter<PersonResponse, AdminManageActorsAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<PersonResponse>() {
-        override fun areItemsTheSame(a: PersonResponse, b: PersonResponse) = a.id == b.id
-        override fun areContentsTheSame(a: PersonResponse, b: PersonResponse) = a == b
+class AdminManageMoviesAdapter(
+    private val onEdit: (MovieResponse) -> Unit,
+    private val onDelete: (MovieResponse) -> Unit
+) : ListAdapter<MovieResponse, AdminManageMoviesAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<MovieResponse>() {
+        override fun areItemsTheSame(a: MovieResponse, b: MovieResponse) =
+            a.id == b.id
+
+        override fun areContentsTheSame(a: MovieResponse, b: MovieResponse) =
+            a == b
     }
 ) {
 
@@ -22,10 +25,16 @@ class AdminManageActorsAdapter(
         private val binding: ItemAdminManageBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(actor: PersonResponse) {
-            binding.txtItemName.text = actor.name
-            binding.btnEdit.setOnClickListener { onEdit(actor) }
-            binding.btnDelete.setOnClickListener { onDelete(actor) }
+        fun bind(movie: MovieResponse) {
+            binding.txtItemName.text = movie.title
+
+            binding.btnEdit.setOnClickListener {
+                onEdit(movie)
+            }
+
+            binding.btnDelete.setOnClickListener {
+                onDelete(movie)
+            }
         }
     }
 
