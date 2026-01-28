@@ -8,6 +8,7 @@ import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.CreateRatingRequest
 import com.example.grupo_pdm.data.RatingResponse
 import com.example.grupo_pdm.data.MovieResponse
+import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,8 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
-    private val _movie = MutableStateFlow<ApiResult<MovieResponse>?>(null)
-    val movie: StateFlow<ApiResult<MovieResponse>?> = _movie.asStateFlow()
+    private val _movie = MutableStateFlow<ApiResult<MovieResponse2>?>(null)
+    val movie: StateFlow<ApiResult<MovieResponse2>?> = _movie.asStateFlow()
 
     private val _ratings = MutableStateFlow<ApiResult<List<RatingResponse>>?>(null)
     val ratings: StateFlow<ApiResult<List<RatingResponse>>?> = _ratings.asStateFlow()

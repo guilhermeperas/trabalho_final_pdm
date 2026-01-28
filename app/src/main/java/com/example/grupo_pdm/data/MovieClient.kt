@@ -14,9 +14,11 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.flow.Flow
@@ -226,7 +228,7 @@ object MovieServiceClient {
         try {
             val response = client.get("/movies/$movie_id")
             if (response.status.isSuccess()) {
-                val movie = response.body<MovieResponse>()
+                val movie = response.body<MovieResponse2>()
                 emit(ApiResult.Success(movie))
             } else {
                 emit(ApiResult.Failure(response.body()))
@@ -235,11 +237,11 @@ object MovieServiceClient {
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
-    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse>>> = flow {
+    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse2>>> = flow {
          try {
             val response = client.get("/movies?&genre=$categoryName")
             if (response.status.isSuccess()) {
-                val movies = response.body<List<MovieResponse>>()
+                val movies = response.body<List<MovieResponse2>>()
                 emit(ApiResult.Success(movies))
             } else {
                 val errorDetails = try {
@@ -261,11 +263,11 @@ object MovieServiceClient {
         }
     }
 
-    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse>>> = flow {
+    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse2>>> = flow {
         try {
             val response = client.get("/movies?orderBy=$filter")
             if (response.status.isSuccess()) {
-                val movies = response.body<List<MovieResponse>>()
+                val movies = response.body<List<MovieResponse2>>()
                 emit(ApiResult.Success(movies))
             } else {
                 val errorDetails = try {

@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.CategoryResponse
 import com.example.grupo_pdm.data.MovieResponse
+import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.data.PersonResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,17 +24,17 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
     private val _categories = MutableStateFlow<ApiResult<List<CategoryResponse>>?>(null)
     val categories: StateFlow<ApiResult<List<CategoryResponse>>?> = _categories.asStateFlow()
 
-    private val _newMovies = MutableStateFlow<ApiResult<List<MovieResponse>>?>(null)
-    val newMovies: StateFlow<ApiResult<List<MovieResponse>>?> = _newMovies.asStateFlow()
+    private val _newMovies = MutableStateFlow<ApiResult<List<MovieResponse2>>?>(null)
+    val newMovies: StateFlow<ApiResult<List<MovieResponse2>>?> = _newMovies.asStateFlow()
 
-    private val _trendingMovies = MutableStateFlow<ApiResult<List<MovieResponse>>?>(null)
-    val trendingMovies: StateFlow<ApiResult<List<MovieResponse>>?> = _trendingMovies.asStateFlow()
+    private val _trendingMovies = MutableStateFlow<ApiResult<List<MovieResponse2>>?>(null)
+    val trendingMovies: StateFlow<ApiResult<List<MovieResponse2>>?> = _trendingMovies.asStateFlow()
 
     private val _actors = MutableStateFlow<ApiResult<List<PersonResponse>>?>(null)
     val actors: StateFlow<ApiResult<List<PersonResponse>>?> = _actors.asStateFlow()
 
-    private val _randomMovie = MutableStateFlow<MovieResponse?>(null)
-    val randomMovie: StateFlow<MovieResponse?> = _randomMovie.asStateFlow()
+    private val _randomMovie = MutableStateFlow<MovieResponse2?>(null)
+    val randomMovie: StateFlow<MovieResponse2?> = _randomMovie.asStateFlow()
 
     private val _favoriteIds = MutableStateFlow<Set<Int>>(emptySet())
     val favoriteIds: StateFlow<Set<Int>> = _favoriteIds.asStateFlow()
@@ -71,10 +72,10 @@ class MainPageViewModel(app: Application) : AndroidViewModel(app) {
         }
     }
 
-    private fun updateFavoriteIdsFromMovies(movies: List<MovieResponse>) {
+    private fun updateFavoriteIdsFromMovies(movies: List<MovieResponse2>) {
         val currentFavorites = _favoriteIds.value.toMutableSet()
         for (movie in movies) {
-            if (movie.favorite == true) {
+            if (movie.favorite) {
                 currentFavorites.add(movie.id)
             } else {
                 currentFavorites.remove(movie.id)

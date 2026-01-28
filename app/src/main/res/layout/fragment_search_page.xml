@@ -19,79 +19,21 @@
     android:padding="12dp"
     tools:layout="@layout/fragment_search_page">
 
-    <!--
-      Botão Home (ícone de casa).
-      No futuro: onClick pode navegar para o ecrã inicial/home do app.
-    -->
-    <ImageButton
-        android:id="@+id/btnHome"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/cd_home"
-        android:src="@drawable/ic_home_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--
-      Botão User (perfil).
-      No futuro: onClick pode abrir login/perfil/configurações.
-    -->
-    <ImageButton
-        android:id="@+id/btnUser"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/cd_user"
-        android:src="@drawable/ic_user_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!--
-      Barra de pesquisa (Material TextInputLayout + EditText).
-      - Fica entre os botões Home e User.
-      - Tem ícone de pesquisa do lado direito (endIcon).
-      No futuro: ao clicar no ícone ou no "Search" do teclado, faz nova pesquisa.
-    -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilSearch"
+    <com.example.grupo_pdm.ui.components.TopBarView
+        android:id="@+id/topBar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="@string/hint_search"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:endIconMode="custom"
-        app:endIconDrawable="@android:drawable/ic_menu_search"
-        app:layout_constraintStart_toEndOf="@id/btnHome"
-        app:layout_constraintEnd_toStartOf="@id/btnUser"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="60dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!--
-          Campo onde o utilizador escreve o texto da pesquisa.
-          imeOptions="actionSearch" faz o teclado mostrar ação "Search".
-          maxLines=1 para manter o campo numa linha.
-        -->
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etSearch"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!--
-      Loading (ProgressBar).
-      - Começa oculto (gone).
-      No futuro: fica visível enquanto a app está a chamar a API/BD.
-    -->
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -108,7 +50,7 @@
         android:gravity="center"
         android:text="@string/msg_default"
         android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -125,7 +67,7 @@
         android:layout_marginTop="12dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/tilSearch"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
         app:layout_constraintBottom_toTopOf="@id/tvRecommendations"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
