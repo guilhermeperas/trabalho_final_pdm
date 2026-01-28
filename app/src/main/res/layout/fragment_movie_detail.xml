@@ -143,7 +143,7 @@
                 android:id="@+id/tvGenresTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Genres"
+                android:text="@string/text_genres"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"
@@ -169,7 +169,7 @@
                 android:id="@+id/tvDirectorTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Director"
+                android:text="@string/text_director"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginTop="16dp"
@@ -298,7 +298,7 @@
                 android:id="@+id/tvYourReviewTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Your Review"
+                android:text="@string/text_your_review"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:layout_marginTop="24dp"
@@ -321,7 +321,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rate this movie:"
+                    android:text="@string/label_rate_movie"
                     android:layout_marginBottom="4dp"/>
 
                 <RatingBar
@@ -336,7 +336,7 @@
                     android:id="@+id/tilComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Write your comment (optional)"
+                    android:hint="@string/hint_comment_optional"
                     android:layout_marginTop="12dp">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -352,7 +352,7 @@
                     android:id="@+id/btnSubmitReview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Submit Review"
+                    android:text="@string/btn_submit_review"
                     android:layout_marginTop="12dp"/>
             </LinearLayout>
 
@@ -361,7 +361,7 @@
                 android:id="@+id/tvAlreadyReviewed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="You have already reviewed this movie."
+                android:text="@string/text_already_reviewed"
                 android:textStyle="italic"
                 android:alpha="0.7"
                 android:visibility="gone"
@@ -376,7 +376,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="View All Reviews"
+                android:text="@string/btn_view_all_reviews"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/reviewInputContainer"
                 app:layout_constraintStart_toStartOf="parent"

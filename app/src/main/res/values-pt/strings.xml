@@ -26,6 +26,30 @@
     <string name="cd_poster">Poster</string>
     <string name="cd_actor">Ator</string>
 
-    <string name="msg_no_results">No results found.</string>
-    <string name="msg_error_loading">Error loading results.</string>
+    <string name="empty_category_message">Nada a ver aqui...</string>
+    <string name="msg_no_results">Nenhum resultado encontrado.</string>
+    <string name="msg_error_loading">Erro ao carregar resultados.</string>
+
+    <!-- Movie Detail Extras -->
+    <string name="text_director">Diretor</string>
+    <string name="text_your_review">A sua avaliação</string>
+    <string name="label_rate_movie">Avalie este filme:</string>
+    <string name="hint_comment_optional">Escreva o seu comentário (opcional)</string>
+    <string name="btn_submit_review">Submeter Avaliação</string>
+    <string name="btn_submitting">A submeter...</string>
+    <string name="text_already_reviewed">Já avaliou este filme.</string>
+    <string name="btn_view_all_reviews">Ver todas as avaliações</string>
+    <string name="text_unknown">Desconhecido</string>
+    <string name="text_all_ages">Todas as idades</string>
+    <string name="text_no_synopsis">Sem sinopse disponível.</string>
+    <string name="msg_select_rating">Por favor, selecione uma classificação</string>
+    <string name="msg_review_submitted">Avaliação submetida!</string>
+    <string name="msg_review_failed">Falha ao submeter avaliação</string>
+    <string name="text_genres">Géneros</string>
+    <string name="title_random_movie">Filme Aleatório</string>
+    <string name="title_categories">Categorias</string>
+    <string name="title_new">Novo</string>
+    <string name="title_trending">Tendencias</string>
+    <string name="title_actors">Atores</string>
+
 </resources>

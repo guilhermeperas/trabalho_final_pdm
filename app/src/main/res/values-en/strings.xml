@@ -26,6 +26,27 @@
     <string name="cd_poster">Poster</string>
     <string name="cd_actor">Actor</string>
 
+    <string name="empty_category_message">Nothing to see here...</string>
     <string name="msg_no_results">No results found.</string>
     <string name="msg_error_loading">Error loading results.</string>
+    <string name="title_random_movie">Random Movie</string>
+    <string name="title_categories">Categories</string>
+    <string name="title_new">New</string>
+    <string name="title_trending">Trending</string>
+    <string name="title_actors">Actors</string>
+    <string name="text_director">Director</string>
+    <string name="text_your_review">Your Review</string>
+    <string name="label_rate_movie">Rate this movie:</string>
+    <string name="hint_comment_optional">Write your comment (optional)</string>
+    <string name="btn_submit_review">Submit Review</string>
+    <string name="btn_submitting">Submitting...</string>
+    <string name="text_already_reviewed">You have already reviewed this movie.</string>
+    <string name="btn_view_all_reviews">View All Reviews</string>
+    <string name="text_unknown">Unknown</string>
+    <string name="text_all_ages">All ages</string>
+    <string name="text_no_synopsis">No synopsis available.</string>
+    <string name="msg_select_rating">Please select a rating</string>
+    <string name="msg_review_submitted">Review submitted!</string>
+    <string name="msg_review_failed">Failed to submit review</string>
+    <string name="text_genres">Genres</string>
 </resources>

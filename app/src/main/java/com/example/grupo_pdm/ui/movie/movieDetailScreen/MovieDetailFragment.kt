@@ -68,7 +68,7 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
         binding.btnSubmitReview.setOnClickListener {
             val score = binding.userRatingBar.rating.toInt()
             if (score == 0) {
-                Toast.makeText(requireContext(), "Please select a rating", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.msg_select_rating), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val comment = binding.etComment.text.toString()
@@ -122,11 +122,11 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                         binding.tvTitle.text = movie.title
 
                         // Synopsis
-                        binding.tvOverview.text = movie.synopsis ?: "No synopsis available."
+                        binding.tvOverview.text = movie.synopsis ?: getString(R.string.text_no_synopsis)
 
                         // Meta: Date • Age
-                        val date = movie.releaseDate ?: "Unknown"
-                        val age = movie.minimumAge?.let { "$it+" } ?: "All ages"
+                        val date = movie.releaseDate ?: getString(R.string.text_unknown)
+                        val age = movie.minimumAge?.let { "$it+" } ?: getString(R.string.text_all_ages)
                         binding.tvMeta.text = "$date • Age: $age"
 
 
@@ -219,21 +219,21 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                 when (result) {
                     is ApiResult.Loading -> {
                         binding.btnSubmitReview.isEnabled = false
-                        binding.btnSubmitReview.text = "Submitting..."
+                        binding.btnSubmitReview.text = getString(R.string.btn_submitting)
                     }
                     is ApiResult.Success -> {
                         binding.btnSubmitReview.isEnabled = true
-                        binding.btnSubmitReview.text = "Submit Review"
-                        Toast.makeText(requireContext(), "Review submitted!", Toast.LENGTH_SHORT).show()
+                        binding.btnSubmitReview.text = getString(R.string.btn_submit_review)
+                        Toast.makeText(requireContext(), getString(R.string.msg_review_submitted), Toast.LENGTH_SHORT).show()
                         binding.etComment.setText("")
                         binding.userRatingBar.rating = 0f
                         viewModel.resetSubmitResult()
                     }
                     is ApiResult.Failure -> {
                         binding.btnSubmitReview.isEnabled = true
-                        binding.btnSubmitReview.text = "Submit Review"
+                        binding.btnSubmitReview.text = getString(R.string.btn_submit_review)
                         android.util.Log.e("MovieDetailFragment", "Error submitting review: ${result.error.detail}")
-                        Toast.makeText(requireContext(), "Failed to submit review", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.msg_review_failed), Toast.LENGTH_SHORT).show()
                         viewModel.resetSubmitResult()
                     }
                     null -> {}
