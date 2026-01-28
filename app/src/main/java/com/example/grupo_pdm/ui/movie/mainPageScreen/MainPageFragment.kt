@@ -65,8 +65,7 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMainPageBinding.bind(view)
-        val topBar = view.findViewById<TopBarView>(R.id.topBar)
-        bindTopBarNavigation(topBar)
+        bindTopBarNavigation(binding.topBar)
 
         setupRecyclerViews()
         setupRandomMovieClick()

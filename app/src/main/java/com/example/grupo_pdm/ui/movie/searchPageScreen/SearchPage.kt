@@ -11,6 +11,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentSearchPageBinding
@@ -41,22 +42,22 @@ class SearchPage : Fragment(R.layout.fragment_search_page) {
 
         // TopBar (Home / Search / User)
         val topBar = binding.topBar
-        topBar.setOnHomeClickListener {
-            findNavController().navigate(SearchPageDirections.actionGlobalMainPage())
-        }
-        topBar.setOnUserClickListener {
-            findNavController().navigate(SearchPageDirections.actionGlobalSignInFragment())
-        }
+        bindTopBarNavigation(topBar)
 
         // RecyclerView das Recomendacoes (horizontal)
-        val recoAdapter = MovieAdapter()
+        val recoAdapter = MovieAdapter(
+            onMovieClick = { movie ->
+                findNavController().navigate(
+                    SearchPageDirections.actionSearchPageToMovieDetailFragment(movie.id)
+                )
+            }
+        )
         binding.rvRecommendations.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.rvRecommendations.adapter = recoAdapter
 
         // RecyclerView dos Resultados (vertical)
         val resultsAdapter = MovieResultAdapter(
-            viewLifecycleOwner.lifecycleScope,
             onMovieClick = { movie ->
                 findNavController().navigate(
                     SearchPageDirections.actionSearchPageToMovieDetailFragment(movie.id)

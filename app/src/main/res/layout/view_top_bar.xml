@@ -39,13 +39,25 @@
     <!-- Search bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearch"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_search"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:boxBackgroundColor="@color/white"
+        app:boxStrokeColor="@color/black"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="2dp"
         app:endIconMode="custom"
         app:endIconDrawable="@android:drawable/ic_menu_search"
+        app:endIconTint="@color/black"
+        app:hintTextColor="@color/black"
+        app:hintEnabled="false"
         app:layout_constraintStart_toEndOf="@id/btnHome"
         app:layout_constraintEnd_toStartOf="@id/btnUser"
         app:layout_constraintTop_toTopOf="parent"
@@ -55,11 +67,20 @@
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:hint="@string/hint_search"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1"
             android:saveEnabled="false"
-            android:textColor="?attr/colorOnSurface"/>
+            android:background="@null"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

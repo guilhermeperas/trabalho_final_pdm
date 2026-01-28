@@ -1,5 +1,6 @@
 package com.example.grupo_pdm.ui.people.details
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -45,8 +46,7 @@ class PeopleDetailFragment : Fragment(R.layout.fragment_actor) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentActorBinding.bind(view)
-        val topBar = view.findViewById<TopBarView>(R.id.topBar)
-        bindTopBarNavigation(topBar)
+        bindTopBarNavigation(binding.topBar)
 
         setupRecyclerViews()
 
@@ -58,11 +58,11 @@ class PeopleDetailFragment : Fragment(R.layout.fragment_actor) {
                     is ApiResult.Success -> {
                         val person = result.data
                         binding.txtActorName.text = person.name
-                        binding.txtActorInfo.text = "Born: ${person.dateOfBirth ?: "Unknown"}" 
+                        binding.txtActorInfo.text = "Born: ${person.dateOfBirth ?: "Unknown"}"
 
                         // Load Image
                         val mainPic = person.pictures?.firstOrNull { it.mainPicture == true } ?: person.pictures?.firstOrNull()
-                        
+
                         if (mainPic != null) {
                              binding.imgActor.load("http://10.0.2.2:8080/people/${person.id}/picture/${mainPic.id}") {
                                 crossfade(true)
@@ -114,7 +114,7 @@ class PeopleDetailFragment : Fragment(R.layout.fragment_actor) {
             adapter = rolesAdapter
         }
     }
-    
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
