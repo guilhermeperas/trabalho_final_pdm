@@ -3,27 +3,46 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
+import com.example.grupo_pdm.data.CreateMovieRequest
+import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieServiceClient
-import com.example.grupo_pdm.data.local.entity.MovieEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AdminManageMoviesViewModel(app: Application) : AndroidViewModel(app) {
+class AdminManageMoviesViewModel(app: Application)
+    : AndroidViewModel(app) {
 
     private val _movies =
-        MutableStateFlow<ApiResult<List<MovieEntity>>?>(null)
-    val movies: StateFlow<ApiResult<List<MovieEntity>>?> =
-        _movies.asStateFlow()
+        MutableStateFlow<ApiResult<List<MovieResponse>>?>(null)
+    val movies = _movies.asStateFlow()
 
     init {
         loadMovies()
     }
 
-    fun loadMovies() {
+    private fun loadMovies() {
         viewModelScope.launch {
-            // TODO: integrar API quando endpoint de filmes estiver disponível
-            }
+            MovieServiceClient
+                .getMoviesSortedBy(null)
+                .collect {
+                    _movies.value = it
+                }
         }
     }
+
+    fun createMovie(title: String) {
+        viewModelScope.launch {
+            MovieServiceClient
+                .createMovie(
+                    CreateMovieRequest(
+                        title = title
+                    )
+                )
+                .collect {
+                    loadMovies()
+                }
+        }
+    }
+}

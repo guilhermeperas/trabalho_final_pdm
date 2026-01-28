@@ -131,6 +131,18 @@ data class CreateMovieRequest(
     val pictures: List<CreatePictureRequest>? = null
 )
 
+@Serializable
+data class UpdateMovieRequest(
+    val id: Int,
+    val title: String,
+    val synopsis: String? = null,
+    val genres: List<Int>? = null,
+    val releaseDate: String? = null,
+    val directorId: Int? = null,
+    val minimumAge: Int? = null
+)
+
+
 // PERSON
 @Serializable
 data class PersonResponse(
@@ -145,6 +157,13 @@ data class CreatePersonRequest(
     val name: String,
     val dateOfBirth: String? = null,
     val pictures: List<CreatePictureRequest>? = null
+)
+
+@Serializable
+data class UpdatePersonRequest(
+    val id: Int,
+    val name: String,
+    val dateOfBirth: String? = null
 )
 
 // PICTURE

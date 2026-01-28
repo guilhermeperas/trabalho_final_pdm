@@ -1,6 +1,5 @@
     package com.example.grupo_pdm.data
 
-import android.graphics.Movie
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.call.body
 import android.util.Base64
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
@@ -19,7 +19,6 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
@@ -194,6 +193,35 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
+
+    fun createPerson(
+        request: CreatePersonRequest
+    ): Flow<ApiResult<PersonResponse>> = flow {
+        try {
+            val response = client.post("/people") {
+                setBody(request)
+            }
+
+            if (response.status.isSuccess()) {
+                val person = response.body<PersonResponse>()
+                emit(ApiResult.Success(person))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
+    }
     fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse>> = flow {
         try {
             val response = client.get("/movies/$movie_id")
@@ -255,6 +283,34 @@ object MovieServiceClient {
         } catch (e: Exception) {
             android.util.Log.e("MovieClient", "Exception fetching ratings for movie ", e)
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
+        }
+    }
+    fun createMovie(
+        request: CreateMovieRequest
+    ): Flow<ApiResult<MovieResponse>> = flow {
+        try {
+            val response = client.post("/movies") {
+                setBody(request)
+            }
+
+            if (response.status.isSuccess()) {
+                val movie = response.body<MovieResponse>()
+                emit(ApiResult.Success(movie))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        type = "error",
+                        title = "Network Error",
+                        status = 500,
+                        detail = e.message ?: "Unknown error"
+                    )
+                )
+            )
         }
     }
 
@@ -341,41 +397,90 @@ object MovieServiceClient {
         android.util.Log.e("MovieClient", "Exception marking as favorite $movieId", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
     }
-    suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
-        val response = client.post("/users/register") {
-            setBody(request)
-        }
-        if (response.status.isSuccess()) {
-            ApiResult.Success(LoginResponse(0, request.username, "user")) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
-            ApiResult.Success(LoginResponse(0, request.username, "user")) // Placeholder, effectively just "Success"
-        } else {
-            ApiResult.Failure(response.body())
-        }
+    fun getUsers(): Flow<ApiResult<List<LoginResponse>>> = flow {
+        try {
+            val response = client.get("/users")
 
-    } catch (e: Exception) {
-        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+            if (response.status.isSuccess()) {
+                val users = response.body<List<LoginResponse>>()
+                emit(ApiResult.Success(users))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
     }
+        suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
+            val response = client.post("/users/register") {
+                setBody(request)
+            }
+            if (response.status.isSuccess()) {
+                ApiResult.Success(
+                    LoginResponse(
+                        0,
+                        request.username,
+                        "user"
+                    )
+                ) // Mocking LoginResponse for now or I should change T to PrivateUserResponse?
+                ApiResult.Success(
+                    LoginResponse(
+                        0,
+                        request.username,
+                        "user"
+                    )
+                ) // Placeholder, effectively just "Success"
+            } else {
+                ApiResult.Failure(response.body())
+            }
 
-    suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
-        android.util.Log.d("MovieClient", "Attempting login for user: $username")
-        val response = client.get("/users/login") {
-            basicAuth(username, password)
+        } catch (e: Exception) {
+            ApiResult.Failure(
+                ProblemDetails(
+                    "error",
+                    "Network Error",
+                    500,
+                    e.message ?: "Unknown error"
+                )
+            )
         }
-        if (response.status.isSuccess()) {
-            val loginResult: LoginResponse = response.body()
-            android.util.Log.d("MovieClient", "Login success: ${loginResult.id}")
-            setCredentials(username, password)
-            ApiResult.Success(loginResult)
-        } else {
-            android.util.Log.e("MovieClient", "Login failed: ${response.status}")
-            ApiResult.Failure(response.body())
+
+        suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
+            android.util.Log.d("MovieClient", "Attempting login for user: $username")
+            val response = client.get("/users/login") {
+                basicAuth(username, password)
+            }
+            if (response.status.isSuccess()) {
+                val loginResult: LoginResponse = response.body()
+                android.util.Log.d("MovieClient", "Login success: ${loginResult.id}")
+                setCredentials(username, password)
+                ApiResult.Success(loginResult)
+            } else {
+                android.util.Log.e("MovieClient", "Login failed: ${response.status}")
+                ApiResult.Failure(response.body())
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("MovieClient", "Exception during login", e)
+            ApiResult.Failure(
+                ProblemDetails(
+                    "error",
+                    "Network Error",
+                    500,
+                    e.message ?: "Unknown error"
+                )
+            )
         }
-    } catch (e: Exception) {
-        android.util.Log.e("MovieClient", "Exception during login", e)
-        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+
+
+        data class Credentials(val username: String, val password: String)
     }
-
-
-
-    data class Credentials(val username: String, val password: String)
-}
