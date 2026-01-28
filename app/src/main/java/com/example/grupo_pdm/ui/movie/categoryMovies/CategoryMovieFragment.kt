@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentCategoryMovieScreenBinding
@@ -32,6 +33,7 @@ class CategoryMovieFragment : Fragment(R.layout.fragment_category_movie_screen) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCategoryMovieScreenBinding.bind(view)
+        bindTopBarNavigation(binding.topBar)
 
 
         binding.rvMovies.adapter = adapter

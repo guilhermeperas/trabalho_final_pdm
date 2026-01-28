@@ -235,6 +235,17 @@ data class LoginResponse(
     val description: String? = null
 )
 
+@Serializable
+data class UserSelfResponse(
+    val id: Int = 0,
+    val username: String? = null,
+    val role: String? = null,
+    val email: String? = null,
+    val description: String? = null,
+    val dateOfBirth: String? = null,
+    val picture: PictureResponse? = null
+)
+
 // RATING (from /movies/{id}/ratings endpoint)
 @Serializable
 data class RatingResponse(

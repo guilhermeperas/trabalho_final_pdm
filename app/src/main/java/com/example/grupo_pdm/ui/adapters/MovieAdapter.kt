@@ -1,6 +1,5 @@
 package com.example.grupo_pdm.ui.adapters
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,10 +7,7 @@ import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
 import com.example.grupo_pdm.R
-import com.example.grupo_pdm.data.ApiResult
-import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieResponse2
-import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.ItemMovieRecoBinding
 
 

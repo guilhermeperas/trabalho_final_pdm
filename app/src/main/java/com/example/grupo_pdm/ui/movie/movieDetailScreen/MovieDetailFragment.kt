@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentMovieDetailBinding
@@ -39,6 +40,7 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieDetailBinding.bind(view)
+        bindTopBarNavigation(binding.topBar)
 
         // Setup horizontal layout managers
         binding.rvGenres.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
