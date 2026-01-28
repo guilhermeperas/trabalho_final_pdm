@@ -13,6 +13,9 @@ import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
+import com.example.grupo_pdm.ui.components.TopBarView
+import com.example.grupo_pdm.ui.components.bindTopBarNavigation
+import com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage
 import kotlinx.coroutines.launch
 
 class MainPage : Fragment(R.layout.fragment_main_page) {
@@ -53,14 +56,16 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     
     private val actorAdapter = ActorHomeAdapter { person ->
         findNavController().navigate(
+
             MainPageDirections.actionMainPageToPeopleDetailFragment(person.id)
         )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val topBar = view.findViewById<TopBarView>(R.id.topBar)
+        bindTopBarNavigation(topBar)
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMainPageBinding.bind(view)
-
         setupRecyclerViews()
         setupRandomMovieClick()
         observeData()

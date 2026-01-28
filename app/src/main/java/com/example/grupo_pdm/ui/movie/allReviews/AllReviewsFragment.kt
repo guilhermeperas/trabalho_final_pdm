@@ -18,7 +18,7 @@ class AllReviewsFragment : Fragment(R.layout.fragment_all_reviews) {
     private var _binding: FragmentAllReviewsBinding? = null
     private val binding get() = _binding!!
     
-    private val args: AllReviewsFragmentArgs by navArgs()
+    //private val args: AllReviewsFragmentArgs by navArgs()
     private val viewModel: AllReviewsViewModel by viewModels()
     private val ratingAdapter = RatingAdapter()
 
@@ -31,7 +31,7 @@ class AllReviewsFragment : Fragment(R.layout.fragment_all_reviews) {
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
-
+/*
         viewModel.loadRatings(args.movieId)
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -52,7 +52,8 @@ class AllReviewsFragment : Fragment(R.layout.fragment_all_reviews) {
                 }
             }
         }
-    }
+        */
+     }
 
     override fun onDestroyView() {
         super.onDestroyView()

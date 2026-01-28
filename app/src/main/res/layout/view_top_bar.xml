@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  layout_top_bar.xml
-  Reusable top bar for all screens.
-  Include in any fragment via: <include layout="@layout/layout_top_bar" />
--->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/topBar"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:layout_height="wrap_content">
 
-    <!-- Home button -->
     <ImageButton
         android:id="@+id/btnHome"
         android:layout_width="40dp"
@@ -21,10 +13,8 @@
         android:contentDescription="@string/cd_home"
         android:src="@drawable/ic_home_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- User/Profile button -->
     <ImageButton
         android:id="@+id/btnUser"
         android:layout_width="40dp"
@@ -33,31 +23,32 @@
         android:contentDescription="@string/cd_user"
         android:src="@drawable/ic_user_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    <!-- Search bar -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSearch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hint_search"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+        app:hintTextColor="?attr/colorOnSurfaceVariant"
         app:endIconMode="custom"
         app:endIconDrawable="@android:drawable/ic_menu_search"
         app:layout_constraintStart_toEndOf="@id/btnHome"
         app:layout_constraintEnd_toStartOf="@id/btnUser"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etSearch"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
             android:imeOptions="actionSearch"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:saveEnabled="false"
+            android:textColor="?attr/colorOnSurface" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
