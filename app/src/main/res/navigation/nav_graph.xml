@@ -2,8 +2,19 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph.xml"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/signInFragment">
+
+    <action
+        android:id="@+id/actionGlobalMainPage"
+        app:destination="@id/mainPage"/>
+    <action
+        android:id="@+id/actionGlobalSignInFragment"
+        app:destination="@+id/UserProfile"/>
+    <action
+        android:id="@+id/actionGlobalSearchPage"
+        app:destination="@+id/searchPage"/>
+
 
     <fragment
         android:id="@+id/signInFragment"
@@ -84,4 +95,25 @@
             android:name="movie_id"
             app:argType="integer" />
     </fragment>
+
+    <fragment
+        android:id="@+id/searchPage"
+        android:name="com.example.grupo_pdm.ui.movie.searchPageScreen.SearchPage"
+        android:label="searchPage">
+
+        <argument
+            android:name="query"
+            app:argType="string"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_searchPage_to_movieDetailFragment"
+            app:destination="@id/movieDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/UserProfile"
+        android:name="com.example.grupo_pdm.ui.user.userProfileFragment.UserPerfilFragment"
+        android:label="userProfile">
+    </fragment>
+
 </navigation>

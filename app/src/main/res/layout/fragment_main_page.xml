@@ -18,9 +18,10 @@
     tools:context=".ui.movie.mainPageScreen.MainPage">
 
     <!-- Reusable Top Bar -->
-    <include
+    <com.example.grupo_pdm.ui.components.TopBarView
         android:id="@+id/topBar"
-        layout="@layout/layout_top_bar"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

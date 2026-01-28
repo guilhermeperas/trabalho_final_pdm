@@ -14,9 +14,11 @@ import android.util.Base64
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
 import io.ktor.client.request.header
+import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsBytes
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
@@ -194,11 +196,11 @@ object MovieServiceClient {
              emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
-    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse>> = flow {
+    fun getMovieById(movie_id: Int): Flow<ApiResult<MovieResponse2>> = flow {
         try {
             val response = client.get("/movies/$movie_id")
             if (response.status.isSuccess()) {
-                val movie = response.body<MovieResponse>()
+                val movie = response.body<MovieResponse2>()
                 emit(ApiResult.Success(movie))
             } else {
                 emit(ApiResult.Failure(response.body()))
@@ -207,11 +209,11 @@ object MovieServiceClient {
             emit(ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error")))
         }
     }
-    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse>>> = flow {
+    fun getMoviesByCategory(categoryName: String): Flow<ApiResult<List<MovieResponse2>>> = flow {
          try {
             val response = client.get("/movies?&genre=$categoryName")
             if (response.status.isSuccess()) {
-                val movies = response.body<List<MovieResponse>>()
+                val movies = response.body<List<MovieResponse2>>()
                 emit(ApiResult.Success(movies))
             } else {
                 val errorDetails = try {
@@ -233,11 +235,11 @@ object MovieServiceClient {
         }
     }
 
-    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse>>> = flow {
+    fun getMoviesSortedBy(filter : String?): Flow<ApiResult<List<MovieResponse2>>> = flow {
         try {
             val response = client.get("/movies?orderBy=$filter")
             if (response.status.isSuccess()) {
-                val movies = response.body<List<MovieResponse>>()
+                val movies = response.body<List<MovieResponse2>>()
                 emit(ApiResult.Success(movies))
             } else {
                 val errorDetails = try {
@@ -373,6 +375,142 @@ object MovieServiceClient {
     } catch (e: Exception) {
         android.util.Log.e("MovieClient", "Exception during login", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
+    /**
+     * Pesquisa filmes por TÍTULO usando o endpoint GET /movies com query params.
+     *
+     * Retorna um Flow<ApiResult<List<MovieResponse>>> porque:
+     * - Flow: permite emitir vários estados ao longo do tempo (Loading -> Success/Failure)
+     * - ApiResult: padroniza estados da chamada (Loading/Success/Failure)
+     */
+    fun getMoviesByTitle(title: String): Flow<ApiResult<List<MovieResponse2>>> = flow {
+
+        // 1) Informa a UI que a pesquisa começou (para mostrar ProgressBar, etc.)
+        emit(ApiResult.Loading(0))
+
+        try {
+            // 2) Faz o GET /movies com parâmetros de pesquisa (query string)
+            val response = client.get("/movies") {
+
+                // Filtra por title (partial match conforme swagger)
+                parameter("title", title)
+
+                // Filtros de rating (0-5)
+                parameter("fromRating", 0)
+                parameter("toRating", 5)
+
+                // Se true, só devolve favoritos do utilizador autenticado
+                parameter("favoritesOnly", false)
+
+                // Ordenação: pode ser "releaseDate", "rating" ou "title"
+                parameter("sortBy", "releaseDate")
+
+                // Direção: "asc" (crescente) ou "desc" (decrescente)
+                parameter("sortOrder", "desc")
+            }
+
+            // 3) Interpreta a resposta
+            if (response.status.isSuccess()) {
+                // Sucesso: converte o JSON para List<MovieResponse> e emite Success
+                val movies = response.body<List<MovieResponse2>>()
+                emit(ApiResult.Success(movies))
+            } else {
+                // Erro HTTP: tenta ler ProblemDetails (ou equivalente) e emite Failure
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            // 4) Erro de rede/parse/etc.: emite Failure com um ProblemDetails “genérico”
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        type = "error",
+                        title = "Network Error",
+                        status = 500,
+                        detail = e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
+    }
+
+    /**
+     * Vai buscar a IMAGEM (bytes) de um filme.
+     * Endpoint: GET /movies/{id}/pictures/{pictureId}
+     *
+     * Porquê "suspend":
+     * - É uma chamada única, não precisamos de Flow aqui
+     * - Pode ser chamada dentro de coroutine (ex: no adapter)
+     *
+     * Retorna ByteArray?:
+     * - ByteArray com a imagem quando dá sucesso
+     * - null quando falha (para manter simples no adapter)
+     */
+    suspend fun getMoviePictureBytes(movieId: Int, pictureId: Int): ByteArray? {
+        return try {
+            // Faz o GET direto ao endpoint da imagem
+            val response = client.get("/movies/$movieId/pictures/$pictureId")
+
+            // Se for 2xx, devolve os bytes do corpo; senão devolve null
+            if (response.status.isSuccess()) response.bodyAsBytes() else null
+
+        } catch (e: Exception) {
+            // Qualquer exceção (rede, timeout, etc.) -> null
+            null
+        }
+    }
+
+    /**
+     * Recomendações por GÉNERO.
+     * Usa GET /movies com query param "genre", pedindo "count" itens.
+     *
+     * Observação:
+     * - Aqui você está a ordenar por "rating desc" para recomendar “os melhores”
+     * - Mantém filtros básicos (favoritesOnly=false, rating 0..5)
+     */
+    fun getMoviesByGenre(genre: String, count: Int = 10): Flow<ApiResult<List<MovieResponse2>>> = flow {
+
+        // 1) Estado Loading
+        emit(ApiResult.Loading(0))
+
+        try {
+            // 2) GET /movies filtrando por género + count (limite)
+            val response = client.get("/movies") {
+                parameter("genre", genre)
+
+                // Quantos itens devolver (paginação simples)
+                parameter("count", count)
+
+                // Ordena pelas melhores notas primeiro
+                parameter("sortBy", "rating")
+                parameter("sortOrder", "desc")
+
+                // Filtros gerais
+                parameter("favoritesOnly", false)
+                parameter("fromRating", 0)
+                parameter("toRating", 5)
+            }
+
+            // 3) Sucesso/erro
+            if (response.status.isSuccess()) {
+                emit(ApiResult.Success(response.body()))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+
+        } catch (e: Exception) {
+            // 4) Exceção -> Failure genérico
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        type = "error",
+                        title = "Network Error",
+                        status = 500,
+                        detail = e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
     }
 
 

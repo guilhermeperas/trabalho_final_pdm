@@ -6,13 +6,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.MovieResponse
+import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.databinding.FragmentMainPageBinding
 import com.example.grupo_pdm.ui.adapters.ActorHomeAdapter
 import com.example.grupo_pdm.ui.adapters.CategoryAdapter
 import com.example.grupo_pdm.ui.adapters.MovieAdapter
+import com.example.grupo_pdm.ui.components.TopBarView
 import kotlinx.coroutines.launch
 
 class MainPage : Fragment(R.layout.fragment_main_page) {
@@ -21,7 +24,7 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     
     private val viewModel: MainPageViewModel by viewModels()
     
-    private var currentRandomMovie: MovieResponse? = null
+    private var currentRandomMovie: MovieResponse2? = null
 
     private val categoriesAdapter = CategoryAdapter { category ->
         findNavController().navigate(
@@ -60,6 +63,8 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMainPageBinding.bind(view)
+        val topBar = view.findViewById<TopBarView>(R.id.topBar)
+        bindTopBarNavigation(topBar)
 
         setupRecyclerViews()
         setupRandomMovieClick()
