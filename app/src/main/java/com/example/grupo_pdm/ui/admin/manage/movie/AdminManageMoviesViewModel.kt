@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class AdminManageMoviesViewModel(app: Application)
-    : AndroidViewModel(app) {
+class AdminManageMoviesViewModel(app: Application) : AndroidViewModel(app) {
 
     private val _movies =
         MutableStateFlow<ApiResult<List<MovieResponse2>>?>(null)
@@ -23,24 +22,20 @@ class AdminManageMoviesViewModel(app: Application)
         loadMovies()
     }
 
-    private fun loadMovies() {
+    fun loadMovies() {
         viewModelScope.launch {
             MovieServiceClient
-                .getMoviesSortedBy(null)
+                .getAllMovies()
                 .collect {
                     _movies.value = it
                 }
         }
     }
 
-    fun createMovie(title: String) {
+    fun createMovie(request: CreateMovieRequest) {
         viewModelScope.launch {
             MovieServiceClient
-                .createMovie(
-                    CreateMovieRequest(
-                        title = title
-                    )
-                )
+                .createMovie(request)
                 .collect {
                     loadMovies()
                 }

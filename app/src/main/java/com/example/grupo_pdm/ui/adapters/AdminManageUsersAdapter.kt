@@ -5,17 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.grupo_pdm.data.LoginResponse
+import com.example.grupo_pdm.data.UserResponse
 import com.example.grupo_pdm.databinding.ItemAdminUserBinding
 
-class AdminManageUsersAdapter(
-    private val onDelete: (LoginResponse) -> Unit
-) : ListAdapter<LoginResponse, AdminManageUsersAdapter.ViewHolder>(
-    object : DiffUtil.ItemCallback<LoginResponse>() {
-        override fun areItemsTheSame(a: LoginResponse, b: LoginResponse) =
+class AdminManageUsersAdapter : ListAdapter<UserResponse, AdminManageUsersAdapter.ViewHolder>(
+    object : DiffUtil.ItemCallback<UserResponse>() {
+        override fun areItemsTheSame(a: UserResponse, b: UserResponse) =
             a.id == b.id
 
-        override fun areContentsTheSame(a: LoginResponse, b: LoginResponse) =
+        override fun areContentsTheSame(a: UserResponse, b: UserResponse) =
             a == b
     }
 ) {
@@ -24,13 +22,14 @@ class AdminManageUsersAdapter(
         private val binding: ItemAdminUserBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(user: LoginResponse) {
+        fun bind(user: UserResponse) {
             binding.txtUsername.text = user.username
-            binding.txtRole.text = user.role
-
-            binding.btnDelete.setOnClickListener {
-                onDelete(user)
+            val meta = when {
+                !user.dateOfBirth.isNullOrBlank() -> "Nascimento: ${user.dateOfBirth}"
+                !user.createdAt.isNullOrBlank() -> "Criado: ${user.createdAt}"
+                else -> ""
             }
+            binding.txtRole.text = meta
         }
     }
 
