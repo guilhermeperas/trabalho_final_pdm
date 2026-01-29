@@ -20,12 +20,21 @@ class AdminHomeFragment : Fragment(R.layout.fragment_admin_home_page) {
         _binding = FragmentAdminHomePageBinding.bind(view)
 
         binding.btnActors.setOnClickListener {
+            findNavController().navigate(
+            AdminHomeFragmentDirections.actionAdminHomeFragmentToAdminManageActorsFragment()
+            )
         }
 
         binding.btnMovies.setOnClickListener {
+            findNavController().navigate(
+            AdminHomeFragmentDirections.actionAdminHomeFragmentToAdminManageMoviesFragment()
+            )
         }
 
         binding.btnUsers.setOnClickListener {
+            findNavController().navigate(
+            AdminHomeFragmentDirections.actionAdminHomeFragmentToAdminManageUsersFragment()
+            )
         }
     }
 
