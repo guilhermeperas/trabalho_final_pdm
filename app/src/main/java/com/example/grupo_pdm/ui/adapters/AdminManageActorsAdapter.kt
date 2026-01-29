@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupo_pdm.data.PersonResponse
-import com.example.grupo_pdm.databinding.ItemAdminManageBinding
+import com.example.grupo_pdm.databinding.ItemAdminManageActorBinding
 
 class AdminManageActorsAdapter(
     private val onEdit: (PersonResponse) -> Unit,
@@ -19,11 +19,11 @@ class AdminManageActorsAdapter(
 ) {
 
     inner class ViewHolder(
-        private val binding: ItemAdminManageBinding
+        private val binding: ItemAdminManageActorBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(actor: PersonResponse) {
-            binding.txtItemName.text = actor.name
+            binding.txtTitle.text = actor.name
             binding.btnEdit.setOnClickListener { onEdit(actor) }
             binding.btnDelete.setOnClickListener { onDelete(actor) }
         }
@@ -31,7 +31,7 @@ class AdminManageActorsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(
-            ItemAdminManageBinding.inflate(
+            ItemAdminManageActorBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
