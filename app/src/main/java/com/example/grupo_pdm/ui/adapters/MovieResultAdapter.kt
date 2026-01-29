@@ -1,19 +1,15 @@
 package com.example.grupo_pdm.ui.adapters
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 import com.example.grupo_pdm.data.MovieResponse2
-import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.ItemMovieResultBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MovieResultAdapter(
-    private val scope: CoroutineScope,
     private val onMovieClick: (MovieResponse2) -> Unit = {
 
     }
@@ -48,34 +44,24 @@ class MovieResultAdapter(
 
             // --- Título ---
             binding.tvTitle.text = movie.title
-
             // --- Meta: ano + géneros ---
             // Ex.: "1999 • Horror/Romance"
             val year = movie.releaseDate?.take(4) ?: ""                 // pega só no ano (YYYY)
-            var genres = String()
-            for (genre in movie.genres!!){
-                genres += genre.name + " "
-            }
+            val genres = movie.genres?.joinToString(" ") { it.name } ?: ""
             binding.tvMeta.text = listOf(year, genres)                  // cria lista [ano, generos]
                 .joinToString(" • ")                                    // junta com " • "
 
             // --- Poster ---
-            // 1) Mete placeholder primeiro para evitar mostrar “imagem antiga” quando recicla.
-            binding.ivPoster.setImageResource(android.R.drawable.ic_menu_report_image)
-
-            // 2) Se existir mainPicture, tenta buscar os bytes da imagem via API e converter para Bitmap.
+            // Se existir mainPicture, usar Coil direto com URL
             val picId = movie.mainPicture?.id
             if (picId != null) {
-                scope.launch {
-                    val bytes = MovieServiceClient.getMoviePictureBytes(movie.id, picId)
-                    if (bytes != null) {
-                        // decodeByteArray pode ser pesado, por isso usamos Dispatchers.Default
-                        val bmp = withContext(Dispatchers.Default) {
-                            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                        }
-                        binding.ivPoster.setImageBitmap(bmp)
-                    }
+                val url = "http://10.0.2.2:8080/movies/${movie.id}/pictures/$picId"
+                binding.ivPoster.load(url) {
+                    crossfade(true)
+                    placeholder(android.R.drawable.ic_menu_report_image)
                 }
+            } else {
+                binding.ivPoster.setImageResource(android.R.drawable.ic_menu_report_image)
             }
 
             // --- Clique no item ---

@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import bindTopBarNavigation
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentMovieDetailBinding
@@ -16,6 +17,10 @@ import com.example.grupo_pdm.ui.adapters.CastAdapter
 import com.example.grupo_pdm.ui.adapters.GenreAdapter
 import com.example.grupo_pdm.ui.adapters.RatingAdapter
 import kotlinx.coroutines.launch
+import com.example.grupo_pdm.ui.components.TopBarView
+import coil3.load
+import coil3.request.crossfade
+import coil3.request.placeholder
 
 class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     private var _binding: FragmentMovieDetailBinding? = null
@@ -39,6 +44,7 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentMovieDetailBinding.bind(view)
+        bindTopBarNavigation(binding.topBar)
 
         // Setup horizontal layout managers
         binding.rvGenres.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(
@@ -101,6 +107,17 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                     is ApiResult.Success -> {
                         val movie = result.data
 
+                        // Movie Poster
+                        val pictureId = movie.mainPicture?.id
+                        if (pictureId != null) {
+                            binding.ivMoviePoster.load("http://10.0.2.2:8080/movies/${movie.id}/pictures/$pictureId") {
+                                crossfade(true)
+                                placeholder(android.R.drawable.ic_menu_gallery)
+                            }
+                        } else {
+                            binding.ivMoviePoster.setImageResource(android.R.drawable.ic_menu_gallery)
+                        }
+
                         // Title
                         binding.tvTitle.text = movie.title
 
@@ -126,6 +143,16 @@ class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
                                 findNavController().navigate(
                                     MovieDetailFragmentDirections.actionMovieDetailFragmentToPeopleDetailFragment(director.personId)
                                 )
+                            }
+                            
+                            val dirPicId = director.picture?.id
+                            if (dirPicId != null) {
+                                binding.ivDirectorPhoto.load("http://10.0.2.2:8080/people/${director.personId}/picture/$dirPicId") {
+                                    crossfade(true)
+                                    placeholder(R.drawable.ic_user_24)
+                                }
+                            } else {
+                                binding.ivDirectorPhoto.setImageResource(R.drawable.ic_user_24)
                             }
                         }
 
