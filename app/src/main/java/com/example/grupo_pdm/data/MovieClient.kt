@@ -12,6 +12,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.call.body
 import android.util.Base64
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
@@ -180,11 +181,11 @@ object MovieServiceClient {
         }
     }
     
-    fun getPerson(id: Int): Flow<ApiResult<PersonResponse>> = flow {
+    fun getPerson(id: Int): Flow<ApiResult<PersonDetailResponse>> = flow {
         try {
             val response = client.get("/people/$id")
             if (response.status.isSuccess()) {
-                val person = response.body<PersonResponse>()
+                val person = response.body<PersonDetailResponse>()
                 android.util.Log.d("MovieClient", "Person fetched: ${person.name}")
                 emit(ApiResult.Success(person))
             } else {
@@ -424,6 +425,65 @@ object MovieServiceClient {
             )
         }
     }
+
+    fun getCurrentUser(): Flow<ApiResult<UserSelfResponse>> = flow {
+        emit(ApiResult.Loading(0))
+        try {
+            val response = client.get("/users/self")
+            if (response.status.isSuccess()) {
+                val user = response.body<UserSelfResponse>()
+                emit(ApiResult.Success(user))
+            } else {
+                emit(ApiResult.Failure(response.body()))
+            }
+        } catch (e: Exception) {
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
+    }
+
+    suspend fun getUserPictureBytes(userId: Int): ApiResult<ByteArray> = try {
+        val response = client.get("/users/$userId/picture")
+        if (response.status.isSuccess()) {
+            ApiResult.Success(response.body())
+        } else {
+            ApiResult.Failure(response.body())
+        }
+    } catch (e: Exception) {
+        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
+
+    suspend fun setCurrentUserPicture(request: CreatePictureRequest): ApiResult<Unit> = try {
+        val response = client.put("/users/self/picture") {
+            setBody(request)
+        }
+        if (response.status.isSuccess()) {
+            ApiResult.Success(Unit)
+        } else {
+            ApiResult.Failure(response.body())
+        }
+    } catch (e: Exception) {
+        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
+
+    suspend fun deleteCurrentUserPicture(): ApiResult<Unit> = try {
+        val response = client.delete("/users/self/picture")
+        if (response.status.isSuccess()) {
+            ApiResult.Success(Unit)
+        } else {
+            ApiResult.Failure(response.body())
+        }
+    } catch (e: Exception) {
+        ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
+    }
         suspend fun register(request: RegisterUserRequest): ApiResult<LoginResponse> = try {
             val response = client.post("/users/register") {
                 setBody(request)
@@ -474,15 +534,19 @@ object MovieServiceClient {
             }
         } catch (e: Exception) {
             android.util.Log.e("MovieClient", "Exception during login", e)
-            ApiResult.Failure(
-                ProblemDetails(
-                    "error",
-                    "Network Error",
-                    500,
-                    e.message ?: "Unknown error"
-                )
+        ApiResult.Failure(
+            ProblemDetails(
+                "error",
+                "Network Error",
+                500,
+                e.message ?: "Unknown error"
             )
-        }
+        )
+    }
+
+    fun clearCredentials() = synchronized(lock) {
+        this.credentials = null
+    }
 
     /**
      * Vai buscar a IMAGEM (bytes) de um filme.

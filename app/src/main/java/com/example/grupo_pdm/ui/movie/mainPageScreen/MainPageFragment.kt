@@ -71,6 +71,8 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
         val topBar = view.findViewById<TopBarView>(R.id.topBar)
         bindTopBarNavigation(topBar)
         setupAdminFab()
+        bindTopBarNavigation(binding.topBar)
+
         setupRecyclerViews()
         setupRandomMovieClick()
         observeData()
