@@ -1,13 +1,12 @@
 package com.example.grupo_pdm.ui.admin.manage.users
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.databinding.FragmentAdminManageUsersBinding
@@ -26,22 +25,23 @@ class AdminManageUsersFragment
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAdminManageUsersBinding.bind(view)
 
-        val adapter = AdminManageUsersAdapter(
-            onDelete = {
-                Toast.makeText(
-                    requireContext(),
-                    "Eliminar utilizador (simulado)",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
+        val adapter = AdminManageUsersAdapter()
 
+        binding.rvUsers.layoutManager = LinearLayoutManager(requireContext())
         binding.rvUsers.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.users.collect { result ->
-                if (result is ApiResult.Success) {
-                    adapter.submitList(result.data)
+                when (result) {
+                    is ApiResult.Success -> adapter.submitList(result.data)
+                    is ApiResult.Failure -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Falha ao carregar utilizadores: ${result.error.detail}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {}
                 }
             }
         }

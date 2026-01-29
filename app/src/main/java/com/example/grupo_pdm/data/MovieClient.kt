@@ -26,6 +26,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 
@@ -128,6 +132,38 @@ object MovieServiceClient {
         }
     }
 
+    private fun buildProblemDetails(
+        status: Int,
+        statusDescription: String,
+        rawBody: String
+    ): ProblemDetails {
+        val fallbackTitle = if (statusDescription.isBlank()) "Error" else statusDescription
+        val fallbackDetail = if (rawBody.isBlank()) fallbackTitle else rawBody
+        return try {
+            jsonConfiguration.decodeFromString(ProblemDetails.serializer(), rawBody)
+        } catch (_: Exception) {
+            try {
+                val obj = jsonConfiguration.parseToJsonElement(rawBody).jsonObject
+                val title = obj["title"]?.jsonPrimitive?.contentOrNull ?: fallbackTitle
+                val detail = obj["detail"]?.jsonPrimitive?.contentOrNull ?: fallbackDetail
+                val statusValue = obj["status"]?.jsonPrimitive?.intOrNull ?: status
+                ProblemDetails(
+                    type = "error",
+                    title = title,
+                    status = statusValue,
+                    detail = detail
+                )
+            } catch (_: Exception) {
+                ProblemDetails(
+                    type = "error",
+                    title = fallbackTitle,
+                    status = status,
+                    detail = fallbackDetail
+                )
+            }
+        }
+    }
+
 
     fun getActors(): Flow<ApiResult<List<PersonResponse>>> = flow {
         try {
@@ -210,10 +246,21 @@ object MovieServiceClient {
                 val person = response.body<PersonResponse>()
                 emit(ApiResult.Success(person))
             } else {
-                emit(ApiResult.Failure(response.body()))
+                val rawBody = response.bodyAsText()
+                android.util.Log.e(
+                    "API_TEST",
+                    "POST /people failed: ${response.status.value} ${response.status.description} body=$rawBody"
+                )
+                val errorDetails = buildProblemDetails(
+                    response.status.value,
+                    response.status.description,
+                    rawBody
+                )
+                emit(ApiResult.Failure(errorDetails))
             }
 
         } catch (e: Exception) {
+            android.util.Log.e("API_TEST", "POST /people exception", e)
             emit(
                 ApiResult.Failure(
                     ProblemDetails(
@@ -301,10 +348,21 @@ object MovieServiceClient {
                 val movie = response.body<MovieResponse>()
                 emit(ApiResult.Success(movie))
             } else {
-                emit(ApiResult.Failure(response.body()))
+                val rawBody = response.bodyAsText()
+                android.util.Log.e(
+                    "API_TEST",
+                    "POST /movies failed: ${response.status.value} ${response.status.description} body=$rawBody"
+                )
+                val errorDetails = buildProblemDetails(
+                    response.status.value,
+                    response.status.description,
+                    rawBody
+                )
+                emit(ApiResult.Failure(errorDetails))
             }
 
         } catch (e: Exception) {
+            android.util.Log.e("API_TEST", "POST /movies exception", e)
             emit(
                 ApiResult.Failure(
                     ProblemDetails(
@@ -401,15 +459,25 @@ object MovieServiceClient {
         android.util.Log.e("MovieClient", "Exception marking as favorite $movieId", e)
         ApiResult.Failure(ProblemDetails("error", "Network Error", 500, e.message ?: "Unknown error"))
     }
-    fun getUsers(): Flow<ApiResult<List<LoginResponse>>> = flow {
+    fun getUsers(): Flow<ApiResult<List<UserResponse>>> = flow {
         try {
             val response = client.get("/users")
 
             if (response.status.isSuccess()) {
-                val users = response.body<List<LoginResponse>>()
+                val users = response.body<List<UserResponse>>()
                 emit(ApiResult.Success(users))
             } else {
-                emit(ApiResult.Failure(response.body()))
+                val rawBody = response.bodyAsText()
+                android.util.Log.e(
+                    "API_TEST",
+                    "GET /users failed: ${response.status.value} ${response.status.description} body=$rawBody"
+                )
+                val errorDetails = buildProblemDetails(
+                    response.status.value,
+                    response.status.description,
+                    rawBody
+                )
+                emit(ApiResult.Failure(errorDetails))
             }
 
         } catch (e: Exception) {
@@ -518,6 +586,43 @@ object MovieServiceClient {
             )
         }
 
+    fun getAllMovies(): Flow<ApiResult<List<MovieResponse2>>> = flow {
+        try {
+            android.util.Log.d("API_TEST", "GET /movies (admin)")
+
+            val response = client.get("/movies")
+
+            if (response.status.isSuccess()) {
+                val movies = response.body<List<MovieResponse2>>()
+                android.util.Log.d("API_TEST", "Recebidos ${movies.size} filmes")
+                emit(ApiResult.Success(movies))
+            } else {
+                val rawBody = response.bodyAsText()
+                android.util.Log.e(
+                    "API_TEST",
+                    "GET /movies failed: ${response.status.value} ${response.status.description} body=$rawBody"
+                )
+                val errorDetails = buildProblemDetails(
+                    response.status.value,
+                    response.status.description,
+                    rawBody
+                )
+                emit(ApiResult.Failure(errorDetails))
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("API_TEST", "GET /movies exception", e)
+            emit(
+                ApiResult.Failure(
+                    ProblemDetails(
+                        "error",
+                        "Network Error",
+                        500,
+                        e.message ?: "Unknown error"
+                    )
+                )
+            )
+        }
+    }
         suspend fun login(username: String, password: String): ApiResult<LoginResponse> = try {
             android.util.Log.d("MovieClient", "Attempting login for user: $username")
             val response = client.get("/users/login") {

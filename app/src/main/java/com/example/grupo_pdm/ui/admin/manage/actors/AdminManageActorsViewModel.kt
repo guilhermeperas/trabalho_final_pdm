@@ -18,13 +18,13 @@ class AdminManageActorsViewModel(app: Application)
 
     private val _actors =
         MutableStateFlow<ApiResult<List<PersonResponse>>?>(null)
-    val actors = _actors.asStateFlow()
+    val actors: StateFlow<ApiResult<List<PersonResponse>>?> = _actors
 
     init {
         loadActors()
     }
 
-    fun loadActors() {
+    private fun loadActors() {
         viewModelScope.launch {
             MovieServiceClient.getActors().collect {
                 _actors.value = it
@@ -32,10 +32,10 @@ class AdminManageActorsViewModel(app: Application)
         }
     }
 
-    fun createActor(name: String) {
+    fun createActor(request: CreatePersonRequest) {
         viewModelScope.launch {
             MovieServiceClient
-                .createPerson(CreatePersonRequest(name))
+                .createPerson(request)
                 .collect {
                     loadActors()
                 }
