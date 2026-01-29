@@ -18,7 +18,10 @@ import com.example.grupo_pdm.ui.components.TopBarView
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
+import com.example.grupo_pdm.data.LoginResponse
 import kotlinx.coroutines.launch
+import kotlinx.serialization.modules.SerializersModule
+import com.example.grupo_pdm.data.SessionManager
 
 class MainPage : Fragment(R.layout.fragment_main_page) {
     private var _binding: FragmentMainPageBinding? = null
@@ -67,10 +70,25 @@ class MainPage : Fragment(R.layout.fragment_main_page) {
         _binding = FragmentMainPageBinding.bind(view)
         val topBar = view.findViewById<TopBarView>(R.id.topBar)
         bindTopBarNavigation(topBar)
-
+        setupAdminFab()
         setupRecyclerViews()
         setupRandomMovieClick()
         observeData()
+    }
+
+    private fun setupAdminFab() {
+
+        if (SessionManager.isAdmin()) {
+            binding.fabAdmin.visibility = View.VISIBLE
+
+            binding.fabAdmin.setOnClickListener {
+                findNavController().navigate(
+                    MainPageDirections.actionMainPageToAdminHomeFragment()
+                )
+            }
+        } else {
+            binding.fabAdmin.visibility = View.GONE
+        }
     }
 
     override fun onResume() {

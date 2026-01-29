@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.grupo_pdm.R
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.MovieServiceClient
+import com.example.grupo_pdm.data.SessionManager
 import com.example.grupo_pdm.databinding.FragmentSignInBinding
 import kotlinx.coroutines.launch
 
@@ -66,6 +67,7 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                                 putString("role",result.data.role)
                                 putInt("userId", result.data.id)
                             }
+                            SessionManager.currentUser = result.data
                             goToMain()
                         }
                         is ApiResult.Failure -> {
