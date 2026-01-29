@@ -2,18 +2,32 @@
     <!-- Base application theme. -->
 
     <style name="Base.Theme.Grupo_pdm" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/black</item>
+        <!-- 
+             Brand System:
+             - Primary: Cinema Red (#E50914).
+             - Secondary: Cinema Red (Unified brand color).
+        -->
+        <item name="colorPrimary">@color/brand_red</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/white</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimary</item>
-        <!-- Customize your theme here. -->
-        <item name="android:windowBackground">?attr/colorSurface</item>
-
-        <item name="android:textColor">@color/black</item>
+        <item name="colorSecondary">@color/brand_red</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- 
+             Surface System:
+             - Window: Deepest dark (#121212).
+             - Surface: Cards/Dialogs (#1E1E1E).
+        -->
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background_dark</item>
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="colorSurface">@color/surface_dark</item>
+        
+        <!-- 
+             Typography System:
+             - Primary: High emphasis white (#F5F5F5).
+             - Secondary: Medium emphasis grey (#B3B3B3).
+        -->
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
     </style>
 
     <style name="Theme.Grupo_pdm" parent="Base.Theme.Grupo_pdm" />

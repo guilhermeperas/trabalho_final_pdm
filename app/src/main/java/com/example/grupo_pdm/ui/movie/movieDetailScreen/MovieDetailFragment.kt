@@ -22,17 +22,14 @@ import coil3.request.crossfade
 import coil3.request.placeholder
 
 /**
- * Fragment responsible for displaying the details of a specific movie (Req. 2 - UI).
+ * Fragment responsible for displaying the details of a specific movie
  *
  * Capabilities:
- * - Shows movie metadata (title, overview, release date, age rating).
+ * - Shows movie data
  * - Displays genres and cast list using RecyclerViews.
- * - Allows users to toggle favorites (persisted via API).
+ * - Allows users to toggle favorites
  * - Allows users to submit a rating (if not already rated).
  *
- * Observations:
- * - Uses Coroutines (Req. 5) to collect ViewModel state flows.
- * - Handles the "Only One Activity" principle (PB05) by being a Fragment within the navigation graph.
  */
 class MovieDetailFragment : Fragment(R.layout.fragment_movie_detail) {
     private var _binding: FragmentMovieDetailBinding? = null

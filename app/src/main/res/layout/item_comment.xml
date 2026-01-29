@@ -7,6 +7,8 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
     app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="@color/surface_dark"
+    app:cardElevation="2dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,7 +23,8 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="14sp"
-            tools:text="User123"
+            android:textColor="@color/text_primary"
+            tools:text="@string/placeholder_username"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ratingContainer"/>
@@ -33,6 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="14sp"
+            android:textColor="@color/text_primary"
             android:alpha="0.9"
             tools:text="This movie was amazing! Loved every moment of it."
             app:layout_constraintTop_toBottomOf="@id/tvUser"
@@ -71,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                android:textColor="@color/gold_accent"
                 tools:text="8.5"/>
 
             <TextView
@@ -78,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:text="/5"
                 android:textSize="10sp"
+                android:textColor="@color/text_secondary"
                 android:alpha="0.6"/>
         </LinearLayout>
 

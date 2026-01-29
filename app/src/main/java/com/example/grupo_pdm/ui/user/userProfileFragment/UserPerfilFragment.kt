@@ -24,15 +24,13 @@ import com.example.grupo_pdm.databinding.FragmentUserPerfilBinding
 import kotlinx.coroutines.launch
 
 /**
- * Fragment responsible for user profile management (Req. 2).
+ * Fragment responsible for user profile management (
  *
  * Capabilities:
  * - Displays user information.
- * - Allows updating profile picture via Camera or Gallery (Req. 3).
+ * - Allows updating profile picture via Camera or Gallery
  * - Manages user logout and session clearing.
  *
- * Requirements Met:
- * - Req. 3 (Photos & Gallery): Uses ActivityResultContracts for Camera and Gallery picker.
  */
 class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
 

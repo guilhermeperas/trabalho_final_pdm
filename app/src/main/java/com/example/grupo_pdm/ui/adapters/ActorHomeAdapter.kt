@@ -5,11 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.grupo_pdm.data.PersonResponse
 import com.example.grupo_pdm.databinding.ItemActorHomeBinding
-import androidx.lifecycle.lifecycleScope
 import coil3.load
 import coil3.request.crossfade
 import coil3.request.placeholder
-import kotlinx.coroutines.launch
 
 /**
  * Adapter for displaying actors in a horizontal RecyclerView on the home page.

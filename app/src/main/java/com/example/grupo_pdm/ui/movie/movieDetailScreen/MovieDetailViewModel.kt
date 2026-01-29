@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.CreateRatingRequest
 import com.example.grupo_pdm.data.RatingResponse
-import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +53,6 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
     fun loadMovie(movieId: Int) {
         currentMovieId = movieId
         
-        // ... implementation
         val userId = prefs.getInt("userId", -1)
         val hasRatedLocally = prefs.getBoolean("rated_${userId}_${movieId}", false)
         if (hasRatedLocally) {
@@ -96,7 +94,7 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun loadRatings(movieId: Int) {
-        // Disabled due to API error 500
+        // error 500
     }
 
     /**

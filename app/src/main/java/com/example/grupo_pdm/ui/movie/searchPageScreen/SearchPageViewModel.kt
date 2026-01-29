@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.grupo_pdm.data.ApiResult
 import com.example.grupo_pdm.data.GenreResponse
-import com.example.grupo_pdm.data.MovieResponse
 import com.example.grupo_pdm.data.MovieResponse2
 import com.example.grupo_pdm.data.MovieServiceClient
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,10 +41,10 @@ class SearchPageViewModel(app: Application) : AndroidViewModel(app) {
 
 
     // ============================================================
-    // RECOMENDAÇÕES (lista horizontal)
+    // Recommendations
     // ============================================================
 
-    // State interno das recomendações.
+    // State of Recommendations.
     private val _recommendations = MutableStateFlow<ApiResult<List<MovieResponse2>>?>(null)
 
     // State exposto para o Fragment (somente leitura).

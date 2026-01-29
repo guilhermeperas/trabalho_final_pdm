@@ -1,5 +1,4 @@
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavGraph
 import androidx.navigation.fragment.findNavController
 import com.example.grupo_pdm.NavGraphDirections
 import com.example.grupo_pdm.ui.components.TopBarView
@@ -10,9 +9,6 @@ import com.example.grupo_pdm.ui.components.TopBarView
  * Objetivo:
  * - Evitar repetir o mesmo código em todos os fragments.
  * - Sempre que um fragment tiver um TopBarView, basta chamar:
- *
- *      bindTopBarNavigation(topBar)
- *
  * E passa a ter:
  * - Search -> abre o SearchPage com a query
  * - Home   -> navega para MainPage

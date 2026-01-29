@@ -8,7 +8,6 @@ import com.example.grupo_pdm.databinding.ItemCastDetailBinding
 
 /**
  * Adapter for showing cast members with name and character in a RecyclerView
- * Extends [BaseAdapter]
  *
  * @param onCastClick event when a cast member is clicked.
  */

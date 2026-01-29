@@ -65,4 +65,38 @@
     <string name="text_genres">Genres</string>
     <string name="text_role_format">as %s</string>
 
+    <!-- Admin Panel -->
+    <string name="title_admin_panel">Administrator Panel</string>
+    <string name="option_manage_actors">Manage Actors</string>
+    <string name="option_manage_movies">Manage Movies</string>
+    <string name="option_manage_users">Manage Users</string>
+    <string name="btn_edit">Edit</string>
+    <string name="btn_delete">Delete</string>
+
+    <!-- Placeholders / Examples -->
+    <string name="placeholder_actor_name">Actor Name</string>
+    <string name="placeholder_movie_title">Movie Title</string>
+    <string name="placeholder_movie_meta">1999-01-04 • Age: 0+</string>
+    <string name="placeholder_username">Username</string>
+    <string name="placeholder_email">user@email.com</string>
+    <string name="placeholder_dob">Born: --</string>
+    <string name="placeholder_character">Character Name</string>
+    <string name="placeholder_year">2023</string>
+    <string name="placeholder_role_as">as </string>
+    <string name="text_register">Register</string>
+    <string name="text_login">Login</string>
+    <string name="text_tap_to_select_photo">Tap to select photo</string>
+    <string name="text_create_account_title">Create Account</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_dob">Date of Birth (YYYY-MM-DD)</string>
+    <string name="text_no_reviews">No reviews yet</string>
+    <string name="title_all_reviews">All Reviews</string>
+    <string name="btn_logout">Logout</string>
+    <string name="btn_edit_photo">Edit Photo</string>
+    
+    <string name="title_directed_movies">Directed Movies</string>
+    <string name="title_acting_roles">Acting Roles</string>
+    <string name="placeholder_actor_info">Born: 01/01/1980\nNationality: USA</string>
+    <string name="placeholder_category">Category</string>
 </resources>

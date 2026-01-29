@@ -45,6 +45,7 @@
     <string name="msg_select_rating">Por favor, selecione uma classificação</string>
     <string name="msg_review_submitted">Avaliação submetida!</string>
     <string name="msg_review_failed">Falha ao submeter avaliação</string>
+    <string name="text_genres">Generos</string>
     <string name="text_role_format">como %s</string>
     <string name="title_random_movie">Filme Aleatório</string>
     <string name="title_categories">Categorias</string>
@@ -61,5 +62,31 @@
     <string name="btn_cancel">Cancelar</string>
     <string name="msg_photo_updated">Foto atualizada com sucesso</string>
     <string name="msg_photo_error">Erro ao atualizar foto</string>
+    <string name="title_admin_panel">Painel de Admin</string>
+    <string name="option_manage_actors">Administrar Atores</string>
+    <string name="option_manage_movies">Administrar Filmes</string>
+    <string name="option_manage_users">Administrar Utilizadores</string>
+    <string name="btn_edit">Editar</string>
+    <string name="btn_delete">Apagar</string>
+    <string name="placeholder_actor_name">Nome do ator</string>
+    <string name="placeholder_movie_title">Titulo do filme</string>
+    <string name="placeholder_movie_meta">1999-01-04 • Age: 0+</string>
+    <string name="placeholder_username">Username</string>
+    <string name="placeholder_email">user@email.com</string>
+    <string name="placeholder_dob">Born: --</string>
+    <string name="placeholder_character">Nome da Pessoa</string>
+    <string name="placeholder_year">2023</string>
+    <string name="placeholder_role_as">"as "</string>
+    <string name="text_register">Criar conta</string>
+    <string name="text_login">Login</string>
+    <string name="text_tap_to_select_photo">Pressiona para escolher foto</string>
+    <string name="text_create_account_title">Criar Conta</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_dob">Data de nascimento</string>
+    <string name="text_no_reviews">Sem reviews ainda...</string>
+    <string name="title_all_reviews">Todas as Reviews</string>
+    <string name="btn_logout">Sair</string>
+    <string name="btn_edit_photo">Editar Foto</string>
 
 </resources>

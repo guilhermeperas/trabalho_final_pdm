@@ -65,7 +65,7 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Titanic"
+                android:text="@string/placeholder_movie_title"
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:maxLines="2"
@@ -79,7 +79,7 @@
                 android:id="@+id/tvMeta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="1997 • Romance/Drama"
+                android:text="@string/placeholder_movie_meta"
                 android:alpha="0.75"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>

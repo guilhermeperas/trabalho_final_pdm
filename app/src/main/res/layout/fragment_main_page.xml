@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   fragment_main_page.xml
-  Main page screen with:
-  - Reusable top bar (include)
-  - Random movie banner
-  - Categories horizontal list
-  - New movies horizontal list
-  - Trending movies horizontal list
-  - Actors horizontal list
+  The primary landing screen of the application.
+  
+  Structure:
+  1. TopBarView: Reusable header for navigation and search.
+  2. NestedScrollView: Allows the entire page content to scroll vertically.
+  3. LinearLayout (Vertical): Stacks the content sections independently.
+  
+  Sections:
+  - Random Movie Banner: Large hero card.
+  - Horizontal Lists (RecyclerViews):
+    * Categories
+    * New Movies
+    * Trending Movies
+    * Actors
+  
+  Styling Note:
+  - Uses `clipToPadding="false"` on RecyclerViews to allow items to scroll
+    to the edge while maintaining parent padding when idle.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -42,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="16dp">
 
             <!-- ===== RANDOM MOVIE BANNER ===== -->
             <TextView
@@ -50,8 +61,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_random_movie"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardRandomMovie"
@@ -75,9 +87,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_categories"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvCategories"
@@ -95,9 +108,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_new"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvNewMovies"
@@ -115,9 +129,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_trending"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTrendingMovies"
@@ -135,9 +150,10 @@
                 android:layout_height="wrap_content"
                 android:text="@string/title_actors"
                 android:textStyle="bold"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"/>
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="12dp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvActors"

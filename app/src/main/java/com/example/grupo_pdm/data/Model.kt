@@ -103,7 +103,14 @@ object GenreListSerializer : KSerializer<List<GenreResponse>?> {
         }
     }
 }
-
+@Serializable
+data class UserResponse(
+    val id: Int,
+    val username: String,
+    val dateOfBirth: String? = null,
+    val createdAt: String? = null,
+    val updatedAt: String? = null
+)
 // MOVIE
 @Serializable
 data class MovieResponse(

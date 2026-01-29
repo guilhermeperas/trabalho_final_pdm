@@ -2,4 +2,25 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    
+    <!-- 
+         Cinematic Obsidian Palette
+         High contrast, "Netflix-style" premium aesthetic.
+         - Brand: Vivid Red (#E50914) for actions.
+         - Background: True Black (#000000) for infinity loop.
+         - Surface: Zinc (#121212) for subtle separation.
+    -->
+    <color name="brand_red">#E50914</color>
+    <color name="background_dark">#000000</color>
+    <color name="surface_dark">#121212</color>
+    <color name="surface_light">#1E1E1E</color>
+    
+    <!-- Typography & Accents -->
+    <color name="primary_accent">#FFFFFF</color>
+    <color name="secondary_accent">#B3B3B3</color>
+    <color name="gold_accent">#FFB300</color> <!-- Bright Amber for stars -->
+    
+    <color name="text_primary">#F5F5F5</color>
+    <color name="text_secondary">#B3B3B3</color>
+    <color name="divider_color">#2C2C2C</color>
 </resources>

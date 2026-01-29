@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/txtTitle"
-        android:text="Painel do Administrador"
+        android:text="@string/title_admin_panel"
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,7 +18,7 @@
 
     <Button
         android:id="@+id/btnActors"
-        android:text="Gerir Atores"
+        android:text="@string/option_manage_actors"
         app:layout_constraintTop_toBottomOf="@id/txtTitle"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="24dp"
@@ -27,7 +27,7 @@
 
     <Button
         android:id="@+id/btnMovies"
-        android:text="Gerir Filmes"
+        android:text="@string/option_manage_movies"
         app:layout_constraintTop_toBottomOf="@id/btnActors"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
@@ -36,7 +36,7 @@
 
     <Button
         android:id="@+id/btnUsers"
-        android:text="Gerir Utilizadores"
+        android:text="@string/option_manage_users"
         app:layout_constraintTop_toBottomOf="@id/btnMovies"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="16dp"
