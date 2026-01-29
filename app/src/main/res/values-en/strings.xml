@@ -27,6 +27,7 @@
     <string name="cd_actor">Actor</string>
 
     <string name="empty_category_message">Nothing to see here...</string>
+    <string name="msg_photo_error">Error updating photo</string>
     <string name="msg_no_results">No results found.</string>
     <string name="msg_error_loading">Error loading results.</string>
     <string name="title_random_movie">Random Movie</string>
@@ -49,4 +50,12 @@
     <string name="msg_review_submitted">Review submitted!</string>
     <string name="msg_review_failed">Failed to submit review</string>
     <string name="text_genres">Genres</string>
+    <string name="label_dob">Born: %s</string>
+    <string name="dialog_edit_photo_title">Edit Profile Photo</string>
+    <string name="opt_take_photo">Take Photo</string>
+    <string name="opt_choose_gallery">Choose from Gallery</string>
+    <string name="opt_remove_photo">Remove Photo</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="msg_photo_updated">Photo updated successfully</string>
+    <string name="text_role_format">Genres</string>
 </resources>

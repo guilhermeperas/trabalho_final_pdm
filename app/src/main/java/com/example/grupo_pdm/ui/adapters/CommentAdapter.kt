@@ -9,7 +9,12 @@ import com.example.grupo_pdm.data.RatingResponse
 import com.example.grupo_pdm.databinding.ItemCommentBinding
 
 /**
- * Adapter for displaying user ratings with author, comment, and score.
+ * Adapter for displaying user ratings in a list (Req. 2 - UI).
+ * Shows author, comment text, and numeric score.
+ *
+ * Implementation Details:
+ * - Uses [ListAdapter] for efficient updates via [DiffUtil].
+ * - Binds data to [ItemCommentBinding].
  */
 class RatingAdapter : ListAdapter<RatingResponse, RatingAdapter.RatingViewHolder>(RatingDiffCallback()) {
 

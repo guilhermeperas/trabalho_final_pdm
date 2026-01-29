@@ -45,11 +45,21 @@
     <string name="msg_select_rating">Por favor, selecione uma classificação</string>
     <string name="msg_review_submitted">Avaliação submetida!</string>
     <string name="msg_review_failed">Falha ao submeter avaliação</string>
-    <string name="text_genres">Géneros</string>
+    <string name="text_role_format">como %s</string>
     <string name="title_random_movie">Filme Aleatório</string>
     <string name="title_categories">Categorias</string>
     <string name="title_new">Novo</string>
     <string name="title_trending">Tendencias</string>
     <string name="title_actors">Atores</string>
+
+    <!-- User Profile -->
+    <string name="label_dob">Nascimento: %s</string>
+    <string name="dialog_edit_photo_title">Editar foto de perfil</string>
+    <string name="opt_take_photo">Tirar foto</string>
+    <string name="opt_choose_gallery">Escolher da galeria</string>
+    <string name="opt_remove_photo">Remover foto</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="msg_photo_updated">Foto atualizada com sucesso</string>
+    <string name="msg_photo_error">Erro ao atualizar foto</string>
 
 </resources>

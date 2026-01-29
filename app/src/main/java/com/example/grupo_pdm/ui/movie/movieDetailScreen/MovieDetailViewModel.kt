@@ -15,6 +15,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for the Movie Detail screen.
+ * Handles loading movie details, managing favorite status, and submitting ratings.
+ *
+ * Requirements:
+ * - Req. 2 (Interface): Provides state for UI.
+ * - Req. 4 (Data): Retrieves data from Web Service / Local Prefs.
+ * - Req. 5 (Async): Uses Coroutines for network calls.
+ *
+ * @param app The application context.
+ */
 class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
     private val _movie = MutableStateFlow<ApiResult<MovieResponse2>?>(null)
     val movie: StateFlow<ApiResult<MovieResponse2>?> = _movie.asStateFlow()
@@ -34,10 +45,16 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
     private var currentMovieId: Int = 0
     private val prefs = app.getSharedPreferences("prefs", Context.MODE_PRIVATE)
 
+    /**
+     * Loads movie details by ID.
+     * Also checks local SharedPreferences to see if the user has already rated this movie.
+     *
+     * @param movieId The ID of the movie to fetch.
+     */
     fun loadMovie(movieId: Int) {
         currentMovieId = movieId
         
-        // Check local rating state
+        // ... implementation
         val userId = prefs.getInt("userId", -1)
         val hasRatedLocally = prefs.getBoolean("rated_${userId}_${movieId}", false)
         if (hasRatedLocally) {
@@ -57,6 +74,11 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
         }
 
     }
+
+    /**
+     * Toggles the favorite status of the current movie.
+     * Updates the UI immediately (optimistic) and reverts if the API call fails.
+     */
     fun toggleFavorite() {
         if (currentMovieId == 0) return
         val newValue = !_isFavorite.value
@@ -77,6 +99,13 @@ class MovieDetailViewModel(app: Application) : AndroidViewModel(app) {
         // Disabled due to API error 500
     }
 
+    /**
+     * Submits a user rating for the movie.
+     * Prevents double submission via local flag.
+     *
+     * @param score The rating score (1-5).
+     * @param comment Optional comment text.
+     */
     fun submitRating(score: Int, comment: String?) {
         if (currentMovieId == 0) return
         if (_hasReviewed.value) return // Prevent submission if already reviewed

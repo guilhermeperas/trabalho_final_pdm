@@ -23,6 +23,17 @@ import com.example.grupo_pdm.data.MovieServiceClient
 import com.example.grupo_pdm.databinding.FragmentUserPerfilBinding
 import kotlinx.coroutines.launch
 
+/**
+ * Fragment responsible for user profile management (Req. 2).
+ *
+ * Capabilities:
+ * - Displays user information.
+ * - Allows updating profile picture via Camera or Gallery (Req. 3).
+ * - Manages user logout and session clearing.
+ *
+ * Requirements Met:
+ * - Req. 3 (Photos & Gallery): Uses ActivityResultContracts for Camera and Gallery picker.
+ */
 class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
 
     private var _binding: FragmentUserPerfilBinding? = null
@@ -128,8 +139,8 @@ class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.updatePicture.collect { result ->
                 when (result) {
-                    is ApiResult.Success -> Log.d("UserPerfil", "Foto atualizada com sucesso")
-                    is ApiResult.Failure -> Log.e("UserPerfil", "Erro ao atualizar foto: ${result.error.detail}")
+                    is ApiResult.Success -> Log.d("UserPerfil", getString(R.string.msg_photo_updated))
+                    is ApiResult.Failure -> Log.e("UserPerfil", "${getString(R.string.msg_photo_error)}: ${result.error.detail}")
                     else -> Unit
                 }
             }
@@ -143,7 +154,7 @@ class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
         val dob = user.dateOfBirth ?: "--"
         binding.txtUserName.text = usernameText
         binding.txtUserEmail.text = subtitle
-        binding.txtUserDob.text = "Nascimento: $dob"
+        binding.txtUserDob.text = getString(R.string.label_dob, dob)
     }
 
     // Fallback com dados mínimos das prefs.
@@ -151,7 +162,7 @@ class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
         val usernameText = prefs.getString("username", "") ?: ""
         binding.txtUserName.text = usernameText
         binding.txtUserEmail.text = ""
-        binding.txtUserDob.text = "Nascimento: --"
+        binding.txtUserDob.text = getString(R.string.label_dob, "--")
     }
 
     private fun getDisplayName(uri: android.net.Uri): String? {
@@ -187,9 +198,9 @@ class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
 
     // Menu simples para editar/remover foto.
     private fun showPhotoOptions() {
-        val options = arrayOf("Tirar foto", "Escolher da galeria", "Remover foto")
+        val options = arrayOf(getString(R.string.opt_take_photo), getString(R.string.opt_choose_gallery), getString(R.string.opt_remove_photo))
         AlertDialog.Builder(requireContext())
-            .setTitle("Editar foto de perfil")
+            .setTitle(getString(R.string.dialog_edit_photo_title))
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> launchCamera()
@@ -200,7 +211,7 @@ class UserPerfilFragment : Fragment(R.layout.fragment_user_perfil) {
                     }
                 }
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.btn_cancel), null)
             .show()
     }
 

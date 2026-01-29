@@ -169,6 +169,12 @@ object RatingPolymorphicSerializer : KSerializer<RatingSummary?> {
     }
 }
 
+/**
+ * Represents the detailed movie information returned by the API (Req. 4).
+ *
+ * @property rating Polymorphic rating field (handled by [RatingPolymorphicSerializer]).
+ * @property favorite Local customization field indicating user preference.
+ */
 @Serializable
 data class MovieResponse2(
     val id: Int,

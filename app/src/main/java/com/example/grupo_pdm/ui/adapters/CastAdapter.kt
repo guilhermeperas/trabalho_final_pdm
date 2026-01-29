@@ -7,7 +7,10 @@ import com.example.grupo_pdm.data.CastMemberResponse
 import com.example.grupo_pdm.databinding.ItemCastDetailBinding
 
 /**
- * Adapter for displaying cast members with name and character.
+ * Adapter for showing cast members with name and character in a RecyclerView
+ * Extends [BaseAdapter]
+ *
+ * @param onCastClick event when a cast member is clicked.
  */
 class CastAdapter(
     onCastClick: (CastMemberResponse) -> Unit = {}
@@ -17,8 +20,9 @@ class CastAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(cast: CastMemberResponse) {
-            binding.tvCastName.text = cast.name ?: "Unknown"
-            binding.tvCastCharacter.text = "as ${cast.character}"
+            val context = binding.root.context
+            binding.tvCastName.text = cast.name ?: context.getString(com.example.grupo_pdm.R.string.text_unknown)
+            binding.tvCastCharacter.text = context.getString(com.example.grupo_pdm.R.string.text_role_format, cast.character)
             binding.root.setOnClickListener {
                 onItemClick(cast)
             }
